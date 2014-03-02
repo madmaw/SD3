@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <title>SD3</title>
+    <link rel="stylesheet" href="app.css" type="text/css" />
+    <script src="lib/test/hammer-1.0.6.js"></script>
+    <script src="build/dd.sd3.js"></script>
+</head>
+<body>
+    <svg id="svg" width="100" height="100" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <g id="north" opacity="1">
+            <rect x="0" y="0" width="100" height="50" fill="red" stroke="black" stroke-width="2" />
+            <!--
+        <text x="50" y="25" fill="white" text-anchor="middle" font-size="30" alignment-baseline="central">N</text>
+            -->
+        </g>
+        <g id="south" opacity="1">
+            <rect x="0" y="0" width="100" height="50" fill="green" stroke="black" stroke-width="2" />
+            <!--
+        <text x="50" y="25" fill="white" text-anchor="middle" font-size="30" alignment-baseline="central">S</text>
+            -->
+        </g>
+        <g id="east" opacity="1">
+            <rect x="0" y="0" width="100" height="50" fill="blue" stroke="black" stroke-width="2" />
+            <!--
+        <text x="50" y="25" fill="white" text-anchor="middle" font-size="30" alignment-baseline="central">E</text>
+            -->
+        </g>
+        <g id="west" opacity="1">
+            <rect x="0" y="0" width="100" height="50" fill="brown" stroke="black" stroke-width="2" />
+            <!--
+        <text x="50" y="25" fill="white" text-anchor="middle" font-size="30" alignment-baseline="central">W</text>
+            -->
+            <g transform="translate(50, 25)">
+                <rect x="-10" y="-10" width="20" height="20" stroke="white" stroke-width="3" fill="none">
+                    <!--
+                <animateTransform attributeName="transform" attributeType="XML"
+                                  type="rotate" from="0" to="-360" dur="5s" begin="0s"
+                                  additive="replace" fill="freeze" repeatCount="indefinite" />
+                -->
+                </rect>
+            </g>
+        </g>
+        <g id="top" opacity="1">
+            <rect x="0" y="0" width="100" height="100" fill="#333333" transform="translate(-50,-50)" stroke="black" stroke-width="2"/>
+            <!--
+            <text x="0" y="0" fill="white" text-anchor="middle" font-size="30" alignment-baseline="central">4</text>
+                -->
+            <circle cx="-20" cy="-20" r="15" stroke="white" stroke-width="3" fill="none" />
+            <rect x="-20" y="-20" width="60" height="60" stroke="white" stroke-width="3" fill="none">
+                <!--
+                <animateTransform attributeName="transform" attributeType="XML"
+                                  type="rotate" from="0" to="-360" dur="5s" begin="0s"
+                                  additive="replace" fill="freeze" repeatCount="indefinite" />
+                -->
+            </rect>
+        </g>
+        <g id="ball">
+            <circle cx="0" cy="0" r="20" fill="yellow" stroke="black" stroke-width="2" />
+            <line x1="-20" y1="0" x2="20" y2="0" stroke="red" stroke-width="4"/>
+        </g>
+        <g id="arrow">
+            <g transform="translate(70, 20)">
+                <g id="arrow-rotater">
+                    <path d="M 0,0 L 100,0 L 100,-20 L 140,20 L 100,60 L 100,40 L 0,40 z" fill="white" stroke="red" stroke-width="3" transform="translate(-70, 0)" />
+                </g>
+            </g>
+        </g>
+        <g id="arrow2">
+            <g transform="scale(0.5)" opacity="0.8">
+                <g transform="rotate(90)">
+                    <path d="M 0,0 L 100,0 L 100,-20 L 140,20 L 100,60 L 100,40 L 0,40 z" fill="white" stroke="red" stroke-width="3" transform="translate(-70, -20)" />
+                </g>
+            </g>
+        </g>
+        <rect id="debug-bounds" x="0" y="0" width="0" height="0" fill="none" stroke="#00ff00" stroke-width="7" opacity="0.3"/>
+        <line id="debug-order" x1="0" y1="0" x2="0" y2="0" fill="none" stroke="#ff0000" stroke-width="3" opacity="0.5" />
+        <g id="group">
+
+        </g>
+        <rect x="0" y="0" width="100%" height="100%" fill="gray" />
+        <g id="content">
+        </g>
+        <g id="debug-container" transform="translate(200, 200)">
+        </g>
+    </svg>
+    <div id="controls">
+        <button id="rotate-left">Rotate Left</button>
+        <button id="rotate-right">Rotate Right</button>
+        <button id="tilt-up">Tilt Up</button>
+        <button id="tilt-back">Tilt Back</button>
+        <button id="redraw">Redraw</button>
+        <button id="clear-debug">Clear Debug</button>
+        <button id="toggle-debug">Toggle Debug</button>
+        <br/>
+        <textarea id="log" rows="6"></textarea>
+    </div>
+</body>
+</html>
