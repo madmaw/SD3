@@ -1,4 +1,4 @@
-module DD.SD3 {
+module SD3 {
 
     export enum ListRemoveResultSD3 {
         CONTINUE = 0,

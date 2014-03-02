@@ -1,6 +1,6 @@
 ///<reference path="IObjectSD3.ts"/>
 
-module DD.SD3 {
+module SD3 {
 
     export class AbstractObjectSD3 implements IObjectSD3 {
 

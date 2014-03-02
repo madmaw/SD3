@@ -1,4 +1,4 @@
-module DD.SD3 {
+module SD3 {
 
     export class UnorderedListSD3<T> implements IListSD3<T> {
 

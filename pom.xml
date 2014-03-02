@@ -3,16 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>devlins-dungeon</groupId>
-    <artifactId>devlins-dungeon-sd3</artifactId>
+    <!-- mostly exists just so we can load this project sensibly in IntelliJ -->
+    <groupId>SD3</groupId>
+    <artifactId>SD3</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
-
-    <parent>
-        <groupId>devlins-dungeon</groupId>
-        <artifactId>devlins-dungeon</artifactId>
-        <version>1</version>
-    </parent>
-
 
 </project>

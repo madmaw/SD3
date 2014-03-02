@@ -13,4 +13,5 @@ Why SVG?
 Constraints
 * Because SD3 uses 2D transformations to give a 3D effect, you cannot rotate objects on the x or y axis (only the z axis)
 * You can tilt the viewing angle on the x axis, however you should probably limit it to between 0 and 90 degrees
-* SMIL animations on 3D surfaces work inconsistently should probably be avoided 
+* SMIL animations on 3D surfaces work inconsistently should be avoided 
+* No translation of Y coordinates to screen/SVG coordinates occurs so everything is upside down

@@ -1,6 +1,6 @@
 ///<reference path="AbstractObjectSD3.ts"/>
 
-module DD.SD3 {
+module SD3 {
 
 
     export class ObjectGroupSD3 extends AbstractObjectSD3 {

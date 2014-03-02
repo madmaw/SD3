@@ -59,16 +59,16 @@ window.onload = () => {
     svg.removeChild(debugRectPrototype);
     svg.removeChild(debugLinePrototype);
 
-    var orderedNodeList = new DD.SD3.OrderedListSD3<DD.SD3.ViewSVGGroupOrderedNodeSD3>(DD.SD3.ViewSVGGroupOrderedNodeSD3.compare);
+    var orderedNodeList = new SD3.OrderedListSD3<SD3.ViewSVGGroupOrderedNodeSD3>(SD3.ViewSVGGroupOrderedNodeSD3.compare);
 
-    var camera = new DD.SD3.CameraSD3();
+    var camera = new SD3.CameraSD3();
     camera.setRotationZ(0);
-    var view = new DD.SD3.ViewSVGGroupMainSD3(contentElement, camera, orderedNodeList.empty());
+    var view = new SD3.ViewSVGGroupMainSD3(contentElement, camera, orderedNodeList.empty());
     view.setViewDimensions(w, h);
     view.setViewPosition(-w/2, -h/2);
-    var viewMain = new DD.SD3.ViewDebugProxySD3(view, debugContainer, <SVGRectElement><any>debugRectPrototype, <SVGLineElement><any>debugLinePrototype);
+    var viewMain = new SD3.ViewDebugProxySD3(view, debugContainer, <SVGRectElement><any>debugRectPrototype, <SVGLineElement><any>debugLinePrototype);
     viewMain.debugging = false;
-    DD.SD3.VISUAL_DEBUG = viewMain;
+    SD3.VISUAL_DEBUG = viewMain;
 
     var groupElement = document.getElementById("group");
     svg.removeChild(groupElement);
@@ -102,46 +102,46 @@ window.onload = () => {
     var wallHeight = 50;
     var ballDiameter = 80;
 
-    var objectGroupA = new DD.SD3.ObjectGroupSD3(camera);
-    var objectGroupB = new DD.SD3.ObjectGroupSD3(camera);
-    var objectGroup = new DD.SD3.ObjectGroupSD3(camera);
+    var objectGroupA = new SD3.ObjectGroupSD3(camera);
+    var objectGroupB = new SD3.ObjectGroupSD3(camera);
+    var objectGroup = new SD3.ObjectGroupSD3(camera);
 
     objectGroup.setView(viewMain, true);
-    objectGroup.setObject("a", objectGroupA, new DD.SD3.PointSD3(0, 0, 0), 0 * Math.PI / 3);
-    //objectGroup.setObject("b", objectGroupB, new DD.SD3.PointSD3(0, 0, 0), 0);
+    objectGroup.setObject("a", objectGroupA, new SD3.PointSD3(0, 0, 0), 0 * Math.PI / 3);
+    //objectGroup.setObject("b", objectGroupB, new SD3.PointSD3(0, 0, 0), 0);
 
-    var westObject = new DD.SD3.ObjectVerticalSurfaceSD3(<Element>westElement.cloneNode(true), camera, Math.PI, wallWidth, wallHeight);
+    var westObject = new SD3.ObjectVerticalSurfaceSD3(<Element>westElement.cloneNode(true), camera, Math.PI, wallWidth, wallHeight);
     /*
-    var eastObject = new DD.SD3.ObjectVerticalSurfaceSD3(eastElement, 0, wallWidth, wallHeight);
-    var westObject = new DD.SD3.ObjectVerticalSurfaceSD3(westElement, Math.PI, wallWidth, wallHeight);
-    var southObject = new DD.SD3.ObjectVerticalSurfaceSD3(southElement, Math.PI / 2, wallWidth, wallHeight);
-    var northObject = new DD.SD3.ObjectVerticalSurfaceSD3(northElement, Math.PI * 3 / 2, wallWidth, wallHeight);
+    var eastObject = new SD3.ObjectVerticalSurfaceSD3(eastElement, 0, wallWidth, wallHeight);
+    var westObject = new SD3.ObjectVerticalSurfaceSD3(westElement, Math.PI, wallWidth, wallHeight);
+    var southObject = new SD3.ObjectVerticalSurfaceSD3(southElement, Math.PI / 2, wallWidth, wallHeight);
+    var northObject = new SD3.ObjectVerticalSurfaceSD3(northElement, Math.PI * 3 / 2, wallWidth, wallHeight);
     */
-    var topObject = new DD.SD3.ObjectHorizontalSurfaceSD3(topElement, camera, wallWidth, wallWidth);
+    var topObject = new SD3.ObjectHorizontalSurfaceSD3(topElement, camera, wallWidth, wallWidth);
 
     var width = 5;
     var height = 5;
     var depth = 5;
 
-    var unorderedGroupView = new DD.SD3.ViewSVGGroupSD3(groupElement, new DD.SD3.UnorderedListSD3<DD.SD3.ViewSVGGroupOrderedNodeSD3>());
+    var unorderedGroupView = new SD3.ViewSVGGroupSD3(groupElement, new SD3.UnorderedListSD3<SD3.ViewSVGGroupOrderedNodeSD3>());
 
-    var boxObject = DD.SD3.ObjectGroupCubeSD3.create(camera, unorderedGroupView, wallWidth, wallWidth, wallHeight, topElement, eastElement, northElement, westElement, southElement);
+    var boxObject = SD3.ObjectGroupCubeSD3.create(camera, unorderedGroupView, wallWidth, wallWidth, wallHeight, topElement, eastElement, northElement, westElement, southElement);
     var boxObject2 = boxObject.clone();
 
-    var ballObject = new DD.SD3.ObjectSphereSD3(ballElement, camera, ballDiameter);
+    var ballObject = new SD3.ObjectSphereSD3(ballElement, camera, ballDiameter);
 
-    var arrowObject = new DD.SD3.ObjectVerticalSurfaceSD3(arrowElement, camera, 0, 140, 80, true);
+    var arrowObject = new SD3.ObjectVerticalSurfaceSD3(arrowElement, camera, 0, 140, 80, true);
 
-    var arrow2Object = new DD.SD3.ObjectSphereSD3(arrow2Element, camera, 70);
+    var arrow2Object = new SD3.ObjectSphereSD3(arrow2Element, camera, 70);
 
     // note the coordinates are SVG-ish
     /*
-    objectGroupA.setObject("east", eastObject, new DD.SD3.PointSD3(wallWidth / 2, wallWidth / 2, 0), 0);
-    objectGroupA.setObject("south", southObject, new DD.SD3.PointSD3(-wallWidth / 2, wallWidth / 2, 0), 0);
-    objectGroupA.setObject("north", northObject, new DD.SD3.PointSD3(wallWidth / 2, -wallWidth / 2, 0), 0);
+    objectGroupA.setObject("east", eastObject, new SD3.PointSD3(wallWidth / 2, wallWidth / 2, 0), 0);
+    objectGroupA.setObject("south", southObject, new SD3.PointSD3(-wallWidth / 2, wallWidth / 2, 0), 0);
+    objectGroupA.setObject("north", northObject, new SD3.PointSD3(wallWidth / 2, -wallWidth / 2, 0), 0);
     */
-    //objectGroupA.setObject("top", topObject, new DD.SD3.PointSD3(0, 0, -200), 0);
-    //objectGroupA.setObject("west", westObject, new DD.SD3.PointSD3(0, 0, -200), 0);
+    //objectGroupA.setObject("top", topObject, new SD3.PointSD3(0, 0, -200), 0);
+    //objectGroupA.setObject("west", westObject, new SD3.PointSD3(0, 0, -200), 0);
 
 
     var fill = function (x: number, y: number, z: number) {
@@ -160,31 +160,31 @@ window.onload = () => {
         for (var y = 0; y < height; y++) {
             for (var z = 0; z < depth; z++) {
                 if (fill(x, y, z)) {
-                    var boxCopy = <DD.SD3.ObjectGroupCubeSD3>boxObject.clone();
+                    var boxCopy = <SD3.ObjectGroupCubeSD3>boxObject.clone();
                     if (fill(x-1, y, z)) {
-                        boxCopy.hide(DD.SD3.ObjectGroupCubeSD3.FACE_WEST);
+                        boxCopy.hide(SD3.ObjectGroupCubeSD3.FACE_WEST);
                     }
                     if (fill(x+1, y, z)) {
-                        boxCopy.hide(DD.SD3.ObjectGroupCubeSD3.FACE_EAST);
+                        boxCopy.hide(SD3.ObjectGroupCubeSD3.FACE_EAST);
                     }
                     if (fill(x, y-1, z)) {
-                        boxCopy.hide(DD.SD3.ObjectGroupCubeSD3.FACE_NORTH);
+                        boxCopy.hide(SD3.ObjectGroupCubeSD3.FACE_NORTH);
                     }
                     if (fill(x, y+1, z)) {
-                        boxCopy.hide(DD.SD3.ObjectGroupCubeSD3.FACE_SOUTH);
+                        boxCopy.hide(SD3.ObjectGroupCubeSD3.FACE_SOUTH);
                     }
                     if (fill(x, y, z-1)) {
-                        boxCopy.hide(DD.SD3.ObjectGroupCubeSD3.FACE_TOP);
+                        boxCopy.hide(SD3.ObjectGroupCubeSD3.FACE_TOP);
                     }
-                    var offset = new DD.SD3.PointSD3(x * wallWidth, y * wallWidth, z * wallHeight);
+                    var offset = new SD3.PointSD3(x * wallWidth, y * wallWidth, z * wallHeight);
                     objectGroupA.setObject("box (" + x + "," + y + "," + z + ")", boxCopy, offset, 0);
                 }
             }
         }
     }
-   // objectGroupA.setObject("arrow2", arrow2Object, new DD.SD3.PointSD3(w / 2, h / Math.cos(Math.PI / 3), -38), 0);
+   // objectGroupA.setObject("arrow2", arrow2Object, new SD3.PointSD3(w / 2, h / Math.cos(Math.PI / 3), -38), 0);
 
-    objectGroupB.setObject("ball", ballObject, new DD.SD3.PointSD3(w / 2, h / Math.cos(Math.PI / 3), 0), 0);
+    objectGroupB.setObject("ball", ballObject, new SD3.PointSD3(w / 2, h / Math.cos(Math.PI / 3), 0), 0);
 
 
     var time = 0;
@@ -193,7 +193,7 @@ window.onload = () => {
     camera.setRotationX(Math.PI/3);
     objectGroup.render(0, 0, 0, 0, false);
 
-    var transaction: DD.SD3.ViewSVGGroupMainTransactionSD3 = null;
+    var transaction: SD3.ViewSVGGroupMainTransactionSD3 = null;
     var transforming = false;
 
     // add in some interactivity
@@ -266,7 +266,7 @@ window.onload = () => {
         console.log(p);
         var e = document.elementFromPoint(event.gesture.center.pageX, event.gesture.center.pageY);
         console.log(e);
-        view._nodes.foreach(function (orderedNode: DD.SD3.ViewSVGGroupOrderedNodeSD3) {
+        view._nodes.foreach(function (orderedNode: SD3.ViewSVGGroupOrderedNodeSD3) {
             var screenPoint = view.getScreenPoint(event.gesture.center.pageX, event.gesture.center.pageY);
             if (orderedNode.bounds.contains(screenPoint.x, screenPoint.y)) {
                 var z = orderedNode.render.getScreenDepth(screenPoint.x, screenPoint.y);
@@ -348,10 +348,10 @@ window.onload = () => {
         //zRotation = -dTime / 4000;
 
         //arrowRotaterElement.setAttribute("transform", "rotate(" + (dTime / 100) % 360 + ")");
-        //objectGroup.setObject("arrow", arrowObject, new DD.SD3.PointSD3(width * wallWidth / 2, height * wallHeight / 2, -80), -(dTime / 4000) % (Math.PI * 2), true);
-        objectGroup.setObject("lift", boxObject, new DD.SD3.PointSD3(2 * wallWidth, 3 * wallWidth, (depth - 2) * (wallHeight / 2) + ((depth - 2) * wallHeight / 2) * Math.sin(dTime / 4000)), 0 * -(dTime / 100) % (Math.PI * 2), true);
-        objectGroup.setObject("slider", boxObject2, new DD.SD3.PointSD3(2 * wallWidth + ((width-1) * wallWidth / 2) * Math.sin(dTime / 4000), wallWidth, wallHeight * (depth - 2)), 0, true);
-        //objectGroup.setObject("a", objectGroupA, new DD.SD3.PointSD3(wallWidth * 2, 0, 0), (zRotation * 2) % (Math.PI * 2));
+        //objectGroup.setObject("arrow", arrowObject, new SD3.PointSD3(width * wallWidth / 2, height * wallHeight / 2, -80), -(dTime / 4000) % (Math.PI * 2), true);
+        objectGroup.setObject("lift", boxObject, new SD3.PointSD3(2 * wallWidth, 3 * wallWidth, (depth - 2) * (wallHeight / 2) + ((depth - 2) * wallHeight / 2) * Math.sin(dTime / 4000)), 0 * -(dTime / 100) % (Math.PI * 2), true);
+        objectGroup.setObject("slider", boxObject2, new SD3.PointSD3(2 * wallWidth + ((width-1) * wallWidth / 2) * Math.sin(dTime / 4000), wallWidth, wallHeight * (depth - 2)), 0, true);
+        //objectGroup.setObject("a", objectGroupA, new SD3.PointSD3(wallWidth * 2, 0, 0), (zRotation * 2) % (Math.PI * 2));
         //arrowObject.zRotation = -(zRotation * 2) % (Math.PI * 2);
 
         //camera.setRotationX(xRotation);
@@ -360,7 +360,7 @@ window.onload = () => {
 
         requestAnimationFrame(inc);
     };
-    //objectGroup.setObject("lift", boxObject, new DD.SD3.PointSD3(0 * wallWidth, 1 * wallWidth, 0 * wallHeight), 0, true);
+    //objectGroup.setObject("lift", boxObject, new SD3.PointSD3(0 * wallWidth, 1 * wallWidth, 0 * wallHeight), 0, true);
 
     inc();
 };

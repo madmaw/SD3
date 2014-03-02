@@ -1,6 +1,6 @@
 ///<reference path="AbstractObjectPhysicalSD3.ts"/>
 
-module DD.SD3 {
+module SD3 {
 
     export class ObjectSphereSD3 extends AbstractObjectPhysicalSD3 {
 

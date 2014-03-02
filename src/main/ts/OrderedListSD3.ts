@@ -1,6 +1,6 @@
 ///<reference path="UnorderedListSD3.ts"/>
 
-module DD.SD3 {
+module SD3 {
     export class OrderedListSD3<T> extends UnorderedListSD3<T> {
 
         constructor(private _compare?: (t1: T, t2: T) => number) {

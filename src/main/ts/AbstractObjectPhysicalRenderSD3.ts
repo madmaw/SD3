@@ -1,7 +1,7 @@
 ///<reference path="IObjectRenderSD3.ts"/>
 ///<reference path="IObjectSD3.ts"/>
 
-module DD.SD3 {
+module SD3 {
 
     export class AbstractObjectPhysicalRenderSD3 implements IObjectRenderSD3 {
 

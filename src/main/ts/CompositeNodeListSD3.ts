@@ -1,4 +1,4 @@
-module DD.SD3 {
+module SD3 {
     export class CompositeNodeListSD3 implements NodeList {
         private _length: number;
 

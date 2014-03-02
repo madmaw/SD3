@@ -2,7 +2,7 @@
 ///<reference path="IObjectPhysicalSD3.ts"/>
 ///<reference path="IViewSD3.ts"/>
 
-module DD.SD3 {
+module SD3 {
 
     export class ObjectGroupPhysicalSD3 extends ObjectGroupSD3 implements IObjectPhysicalSD3 {
 

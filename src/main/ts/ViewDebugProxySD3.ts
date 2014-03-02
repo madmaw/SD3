@@ -1,4 +1,4 @@
-module DD.SD3 {
+module SD3 {
 
     export class ViewDebugProxySD3 implements IViewSD3, IVisualDebugSD3 {
 

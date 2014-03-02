@@ -1,7 +1,7 @@
 ///<reference path="ViewSVGGroupSD3.ts"/>
 
 
-module DD.SD3 {
+module SD3 {
 
     export class ViewSVGGroupMainSD3 extends ViewSVGGroupSD3 {
 

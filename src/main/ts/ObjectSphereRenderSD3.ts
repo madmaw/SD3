@@ -1,4 +1,4 @@
-module DD.SD3 {
+module SD3 {
 
     export class ObjectSphereRenderSD3 extends AbstractObjectPhysicalRenderSD3 {
 

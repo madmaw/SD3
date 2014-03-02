@@ -1,4 +1,4 @@
-module DD.SD3 {
+module SD3 {
 
     export class PointSD3 {
         constructor(public x?: number, public y?: number, public z?: number) {

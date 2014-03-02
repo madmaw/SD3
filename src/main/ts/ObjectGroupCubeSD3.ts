@@ -1,6 +1,6 @@
 ///<reference path="ObjectGroupPhysicalSD3.ts"/>
 
-module DD.SD3 {
+module SD3 {
     export class ObjectGroupCubeSD3 extends ObjectGroupPhysicalSD3 {
 
         public static FACE_NORTH: string    = "north";
@@ -88,30 +88,30 @@ module DD.SD3 {
 
         public setTopObject(topObject: IObjectSD3) {
             this._topObject = topObject;
-            this.carefulSetObject(ObjectGroupCubeSD3.FACE_TOP, this._topObject, new DD.SD3.PointSD3(0, 0, 0), 0);
+            this.carefulSetObject(ObjectGroupCubeSD3.FACE_TOP, this._topObject, new PointSD3(0, 0, 0), 0);
         }
 
         public setEastObject(eastObject: IObjectSD3) {
             this._eastObject = eastObject;
-            this.carefulSetObject(ObjectGroupCubeSD3.FACE_EAST, this._eastObject, new DD.SD3.PointSD3(this._width / 2, this._height / 2, 0), 0);
+            this.carefulSetObject(ObjectGroupCubeSD3.FACE_EAST, this._eastObject, new PointSD3(this._width / 2, this._height / 2, 0), 0);
         }
 
         public setSouthObject(southObject: IObjectSD3) {
             this._southObject = southObject;
-            this.carefulSetObject(ObjectGroupCubeSD3.FACE_SOUTH, this._southObject, new DD.SD3.PointSD3(-this._height / 2, this._width / 2, 0), 0);
+            this.carefulSetObject(ObjectGroupCubeSD3.FACE_SOUTH, this._southObject, new PointSD3(-this._height / 2, this._width / 2, 0), 0);
         }
 
         public setWestObject(westObject: IObjectSD3) {
             this._westObject = westObject;
-            this.carefulSetObject(ObjectGroupCubeSD3.FACE_WEST, this._westObject, new DD.SD3.PointSD3(-this._width / 2, -this._height / 2, 0), 0);
+            this.carefulSetObject(ObjectGroupCubeSD3.FACE_WEST, this._westObject, new PointSD3(-this._width / 2, -this._height / 2, 0), 0);
         }
 
         public setNorthObject(northObject: IObjectSD3) {
             this._northObject = northObject;
-            this.carefulSetObject(ObjectGroupCubeSD3.FACE_NORTH, this._northObject, new DD.SD3.PointSD3(this._width / 2, -this._height / 2, 0), 0);
+            this.carefulSetObject(ObjectGroupCubeSD3.FACE_NORTH, this._northObject, new PointSD3(this._width / 2, -this._height / 2, 0), 0);
         }
 
-        private carefulSetObject(id: string, object: IObjectSD3, position: DD.SD3.PointSD3, zRotation: number) {
+        private carefulSetObject(id: string, object: IObjectSD3, position: PointSD3, zRotation: number) {
             if (object != null) {
                 this.setObject(id, object, position, zRotation, false, true);
             } else {
