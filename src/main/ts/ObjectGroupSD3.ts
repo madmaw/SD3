@@ -135,7 +135,7 @@ module SD3 {
                 if (!o.hidden) {
                     var objectRender = this.renderObject(o.object, o.offset, o.zRotation, forceReorder);
                     if (objectRender) {
-                        render.add(i, objectRender);
+                        render.add(i, objectRender, false);
                     }
                 }
             }

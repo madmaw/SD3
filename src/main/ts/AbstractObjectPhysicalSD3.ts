@@ -6,11 +6,13 @@ module SD3 {
     export class AbstractObjectPhysicalSD3 extends AbstractObjectSD3 implements IObjectPhysicalSD3 {
 
         private _elementId: string;
+        private _tempBounds: RectangleSD3;
 
         constructor(public _element: Element, _camera: CameraSD3, private _extents:PointSD3[], public _render:AbstractObjectPhysicalRenderSD3) {
             super(_camera);
             _render._object = this;
             _render._camera = _camera;
+            this._tempBounds = new RectangleSD3();
         }
 
         public getElement() {
@@ -69,6 +71,7 @@ module SD3 {
 
         public render(sx: number, sy: number, sz: number, zRotation: number, forceReorder: boolean): IObjectRenderSD3 {
             var bounds = this._render._bounds;
+            this._tempBounds.copy(bounds);
             var inBounds = this.getBounds(bounds, sx, sy, zRotation);
 
             if (inBounds) {
@@ -94,19 +97,19 @@ module SD3 {
                     if (this._render.reset(sx, sy, sz, zRotation)) {
                         result = this._render;
                         if (forceReorder) {
-                            this._elementId = this._view.reorder(this._elementId, bounds, this._render);
+                            this._elementId = this._view.reorder(this._elementId, this._tempBounds, this._render);
                         }
                     } else {
                         result = null;
                         // remove it
-                        this._view.remove(this._elementId);
+                        this._view.remove(this._elementId, this._tempBounds);
                         this._elementId = null;
                         this.visible = false;
                     }
                 } else {
                     if (this._render.reset(sx, sy, sz, zRotation)) {
                         result = this._render;
-                        this._elementId = this._view.add(this._element, bounds, this._render);
+                        this._elementId = this._view.add(this._element, this._render);
                         this.visible = true;
                     } else {
                         result = null;
@@ -115,7 +118,7 @@ module SD3 {
             } else {
                 result = null;
                 if (this.visible) {
-                    this._view.remove(this._elementId);
+                    this._view.remove(this._elementId, this._tempBounds);
                     this._elementId = null;
                     this.visible = false;
                 }
@@ -127,7 +130,7 @@ module SD3 {
         public unrender() {
             var result = this.visible;
             if (result) {
-                this._view.remove(this._elementId);
+                this._view.remove(this._elementId, this._render._bounds);
                 this._elementId = null;
                 // it's been removed
                 this.visible = false;

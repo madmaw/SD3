@@ -28,12 +28,14 @@ module SD3 {
             // do nothing
         }
 
-        public add(key: string, render: IObjectRenderSD3) {
-            var renderBounds = render.getBounds();
-            if (this._renderCount == 0) {
-                this._bounds.copy(renderBounds);
-            } else {
-                this._bounds.union(renderBounds);
+        public add(key: string, render: IObjectRenderSD3, calculateBounds:boolean) {
+            if( calculateBounds ) {
+                var renderBounds = render.getBounds();
+                if (this._renderCount == 0) {
+                    this._bounds.copy(renderBounds, this._sx, this._sy);
+                } else {
+                    this._bounds.union(renderBounds, this._sx, this._sy);
+                }
             }
             this._renderCount++;
             this._renders[key] = render;

@@ -62,8 +62,10 @@
     <TypeScriptCompile Include="src\main\ts\ViewDebugProxySD3.ts" />
     <TypeScriptCompile Include="src\main\ts\ViewSVGGroupMainSD3.ts" />
     <TypeScriptCompile Include="src\main\ts\ViewSVGGroupMainTransactionSD3.ts" />
-    <TypeScriptCompile Include="src\main\ts\ViewSVGGroupOrderedNodeSD3.ts" />
-    <TypeScriptCompile Include="src\main\ts\ViewSVGGroupSD3.ts" />
+    <TypeScriptCompile Include="src\main\ts\ViewSVGGroupListNodeSD3.ts" />
+    <TypeScriptCompile Include="src\main\ts\ViewSVGGroupListSD3.ts" />
+    <TypeScriptCompile Include="src\main\ts\ViewSVGGroupTreeNodeSD3.ts" />
+    <TypeScriptCompile Include="src\main\ts\ViewSVGGroupTreeSD3.ts" />
     <TypeScriptCompile Include="src\test\d.ts\qunit.d.ts" />
     <TypeScriptCompile Include="src\test\ts\UtilSD3Test.ts" />
   </ItemGroup>

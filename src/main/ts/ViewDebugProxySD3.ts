@@ -31,20 +31,22 @@ module SD3 {
             this._proxied.root = e;
         }
 
-        add(node: Node, bounds: RectangleSD3, render: IObjectRenderSD3): any {
+        add(node: Node, render: IObjectRenderSD3): any {
             //this.renderOrder(order);
+            var bounds = render.getBounds();
             (<Element>node).setAttribute("z", ""+render.getScreenDepth(bounds.cx, bounds.cy));
-            return this._proxied.add(node, bounds, render);
+            return this._proxied.add(node, render);
         }
 
-        remove(nodeId: any): void {
-            this._proxied.remove(nodeId);
+        remove(nodeId: any, oldBounds: RectangleSD3): void {
+            this._proxied.remove(nodeId, oldBounds);
         }
 
-        reorder(nodeId: any, bounds: RectangleSD3, render: IObjectRenderSD3): any {
+        reorder(nodeId: any, oldBounds: RectangleSD3, render: IObjectRenderSD3): any {
             //this.renderOrder(order);
+            var bounds = render.getBounds();
             (<Element>nodeId).setAttribute("z", "" + render.getScreenDepth(bounds.cx, bounds.cy));
-            return this._proxied.reorder(nodeId, bounds, render);
+            return this._proxied.reorder(nodeId, oldBounds, render);
         }
 
         replace(nodeId: any, node: Node): any {

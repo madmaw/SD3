@@ -59,7 +59,7 @@ window.onload = () => {
     svg.removeChild(debugRectPrototype);
     svg.removeChild(debugLinePrototype);
 
-    var orderedNodeList = new SD3.OrderedListSD3<SD3.ViewSVGGroupOrderedNodeSD3>(SD3.ViewSVGGroupOrderedNodeSD3.compare);
+    var orderedNodeList = new SD3.OrderedListSD3<SD3.ViewSVGGroupListNodeSD3>(SD3.ViewSVGGroupListNodeSD3.compare);
 
     var camera = new SD3.CameraSD3();
     camera.setRotationZ(0);
@@ -123,7 +123,7 @@ window.onload = () => {
     var height = 5;
     var depth = 5;
 
-    var unorderedGroupView = new SD3.ViewSVGGroupSD3(groupElement, new SD3.UnorderedListSD3<SD3.ViewSVGGroupOrderedNodeSD3>());
+    var unorderedGroupView = new SD3.ViewSVGGroupListSD3(groupElement, new SD3.UnorderedListSD3<SD3.ViewSVGGroupListNodeSD3>());
 
     var boxObject = SD3.ObjectGroupCubeSD3.create(camera, unorderedGroupView, wallWidth, wallWidth, wallHeight, topElement, eastElement, northElement, westElement, southElement);
     var boxObject2 = boxObject.clone();
@@ -266,9 +266,11 @@ window.onload = () => {
         console.log(p);
         var e = document.elementFromPoint(event.gesture.center.pageX, event.gesture.center.pageY);
         console.log(e);
-        view._nodes.foreach(function (orderedNode: SD3.ViewSVGGroupOrderedNodeSD3) {
+        view._nodes.foreach(function (orderedNode: SD3.ViewSVGGroupListNodeSD3) {
             var screenPoint = view.getScreenPoint(event.gesture.center.pageX, event.gesture.center.pageY);
-            if (orderedNode.bounds.contains(screenPoint.x, screenPoint.y)) {
+            var bounds = orderedNode.bounds;
+            console.log(bounds);
+            if (bounds.contains(screenPoint.x, screenPoint.y)) {
                 var z = orderedNode.render.getScreenDepth(screenPoint.x, screenPoint.y);
                 console.log(z);
             }
@@ -357,9 +359,9 @@ window.onload = () => {
         //camera.setRotationX(xRotation);
         //objectGroup.render(Math.sin(dTime / 5000) * wallWidth * 5, 0, 0, 0, viewMain, false);
 
-
         requestAnimationFrame(inc);
     };
+
     //objectGroup.setObject("lift", boxObject, new SD3.PointSD3(0 * wallWidth, 1 * wallWidth, 0 * wallHeight), 0, true);
 
     inc();

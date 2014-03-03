@@ -1,16 +1,16 @@
-///<reference path="ViewSVGGroupSD3.ts"/>
+///<reference path="ViewSVGGroupListSD3.ts"/>
 
 
 module SD3 {
 
-    export class ViewSVGGroupMainSD3 extends ViewSVGGroupSD3 {
+    export class ViewSVGGroupMainSD3 extends ViewSVGGroupListSD3 {
 
         public _width: number;
         public _height: number;
         public _viewBounds: RectangleSD3;
         public _viewScale: number;
 
-        constructor(root: Element, public camera: CameraSD3, nodeList:IListSD3<ViewSVGGroupOrderedNodeSD3>) {
+        constructor(root: Element, public camera: CameraSD3, nodeList:IListSD3<ViewSVGGroupListNodeSD3>) {
             super(root, nodeList);
             this._width = root.clientWidth;
             this._height = root.clientHeight;

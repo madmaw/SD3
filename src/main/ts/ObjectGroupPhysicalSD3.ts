@@ -6,6 +6,7 @@ module SD3 {
 
     export class ObjectGroupPhysicalSD3 extends ObjectGroupSD3 implements IObjectPhysicalSD3 {
 
+        private _previousBounds: RectangleSD3;
         private _bounds: RectangleSD3;
         private _groupElementId: any;
         private _groupElement: Element;
@@ -13,7 +14,7 @@ module SD3 {
         constructor(camera:CameraSD3, public _physicalView:IViewSD3, render:CompositeObjectRenderSD3 = new CompositeObjectRenderSD3()) {
             super(camera, render);
             this._groupElement = this._physicalView.root;
-            this._bounds = new RectangleSD3();
+            this._previousBounds = new RectangleSD3();
         }
 
         public getElement() {
@@ -49,10 +50,11 @@ module SD3 {
         }
 
         render(sx: number, sy: number, sz: number, zRotation: number, forceReorder: boolean): IObjectRenderSD3 {
-
-            var visible = this.getBounds(this._bounds, sx, sy, zRotation);
+            var bounds = this._render.getBounds();
+            this._previousBounds.copy(bounds);
+            var visible = this.getBounds(bounds, sx, sy, zRotation);
             if (visible) {
-                visible = this._view.isInView(this._bounds);
+                visible = this._view.isInView(bounds);
             } else if (visible == null) {
                 // TODO remove
                 // a bit of a hack to allow results to be included wholesale 
@@ -60,9 +62,12 @@ module SD3 {
             }
             var result: CompositeObjectRenderSD3;
             if (visible) {
+                this._render.reset(sx, sy, sz, zRotation);
+                super.renderInto(this._render, 0, 0, 0, zRotation, false);
+                visible = !this._render.empty;
+            }
+            if( visible ) {
                 result = this._render;
-                result.reset(sx, sy, sz, zRotation);
-                super.renderInto(result, 0, 0, 0, zRotation, false);
                 result.onLoaded();
 
                 // set matrix to translate only
@@ -72,16 +77,16 @@ module SD3 {
                 if (this.visible) {
                     // do nothing if the element is already there
                     if (forceReorder) {
-                        this._groupElementId = this._view.reorder(this._groupElementId, this._bounds, result);
+                        this._groupElementId = this._view.reorder(this._groupElementId, this._previousBounds, result);
                     }
                 } else {
-                    this._groupElementId = this._view.add(this._groupElement, this._bounds, result);
+                    this._groupElementId = this._view.add(this._groupElement, result);
                     this.visible = true;
                 }
             } else {
                 result = null;
                 if (this.visible) {
-                    this._view.remove(this._groupElementId);
+                    this._view.remove(this._groupElementId, this._previousBounds);
                     this._groupElementId = undefined;
                     this.visible = false;
                 }
@@ -94,7 +99,7 @@ module SD3 {
             // do not unrender everything, just remove the element
             var result = this.visible;
             if (result) {
-                this._view.remove(this._groupElementId);
+                this._view.remove(this._groupElementId, this._render.getBounds());
                 this._groupElementId = undefined;
                 this.visible = null;
             }

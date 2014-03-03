@@ -80,18 +80,18 @@ module SD3 {
             this.maxY *= s;
         }
 
-        public union(rect: RectangleSD3): void {
-            this.minX = nullMin(this.minX, rect.minX);
-            this.minY = nullMin(this.minY, rect.minY);
-            this.maxX = nullMax(this.maxX, rect.maxX);
-            this.maxY = nullMax(this.maxY, rect.maxY);
+        public union(rect: RectangleSD3, dx:number = 0, dy:number = 0): void {
+            this.minX = nullMin(this.minX, rect.minX + dx);
+            this.minY = nullMin(this.minY, rect.minY + dy);
+            this.maxX = nullMax(this.maxX, rect.maxX + dx);
+            this.maxY = nullMax(this.maxY, rect.maxY + dy);
         }
 
-        public copy(rect: RectangleSD3): void {
-            this.minX = rect.minX;
-            this.minY = rect.minY;
-            this.maxX = rect.maxX;
-            this.maxY = rect.maxY;
+        public copy(rect: RectangleSD3, dx: number = 0, dy:number = 0): void {
+            this.minX = rect.minX + dx;
+            this.minY = rect.minY + dy;
+            this.maxX = rect.maxX + dx;
+            this.maxY = rect.maxY + dy;
         }
         
         

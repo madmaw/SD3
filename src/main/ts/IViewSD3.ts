@@ -4,11 +4,11 @@ module SD3 {
 
         root: Element;
 
-        add(node: Node, bounds:RectangleSD3, render: IObjectRenderSD3): any;
+        add(node: Node, render: IObjectRenderSD3): any;
 
-        remove(nodeId: any): void;
+        remove(nodeId: any, previousBounds: RectangleSD3): void;
 
-        reorder(nodeId: any, bounds: RectangleSD3, render: IObjectRenderSD3): any;
+        reorder(nodeId: any, previousBounds: RectangleSD3, render: IObjectRenderSD3): any;
 
         replace(nodeId: any, node: Node): any;
 
