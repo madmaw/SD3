@@ -118,8 +118,8 @@ window.onload = () => {
     */
     var topObject = new SD3.ObjectHorizontalSurfaceSD3(topElement, camera, wallWidth, wallWidth);
 
-    var width = 2;
-    var height = 1;
+    var width = 3;
+    var height = 2;
     var depth = 1;
 
     var unorderedGroupView = new SD3.ViewSVGGroupListSD3(groupElement, new SD3.UnorderedListSD3<SD3.ViewSVGGroupListNodeSD3>());
@@ -160,6 +160,7 @@ window.onload = () => {
             for (var z = 0; z < depth; z++) {
                 if (fill(x, y, z)) {
                     var boxCopy = <SD3.ObjectGroupCubeSD3>boxObject.clone();
+                    /*
                     if (fill(x-1, y, z)) {
                         boxCopy.hide(SD3.ObjectGroupCubeSD3.FACE_WEST);
                     }
@@ -175,6 +176,7 @@ window.onload = () => {
                     if (fill(x, y, z-1)) {
                         boxCopy.hide(SD3.ObjectGroupCubeSD3.FACE_TOP);
                     }
+                    */
                     var offset = new SD3.PointSD3(x * wallWidth, y * wallWidth, z * wallHeight);
                     objectGroupA.setObject("box (" + x + "," + y + "," + z + ")", boxCopy, offset, 0);
                 }
@@ -320,6 +322,7 @@ window.onload = () => {
         objectGroup.render(0, 0, 0, view.camera.getRotationZ(), true);
     };
     redraw.onclick = function () {
+        //view.invalidate();
         objectGroup.render(0, 0, 0, view.camera.getRotationZ(), true);
     }
     clearDebug.onclick = function () {

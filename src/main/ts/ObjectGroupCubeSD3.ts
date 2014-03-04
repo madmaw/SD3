@@ -76,7 +76,7 @@ module SD3 {
             northObject?: IObjectSD3, 
             westObject?: IObjectSD3, 
             southObject?: IObjectSD3, 
-            render: CompositeObjectRenderSD3 = new CompositeObjectRenderSD3()
+            render: CompositeObjectRenderSD3 = new ObjectGroupCubeRenderSD3()
         ) {
             super(camera, physicalView, render);
             this.setTopObject(topObject);

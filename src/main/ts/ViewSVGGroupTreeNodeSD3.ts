@@ -146,7 +146,7 @@
                     var childBounds = child._render.getBounds();
                     if (childBounds.overlaps(bounds)) {
                         var intersection = new RectangleSD3();
-                        RectangleSD3.intersect(intersection, childBounds, bounds);
+                        RectangleSD3.intersect(childBounds, bounds, intersection);
                         var cx = intersection.cx;
                         var cy = intersection.cy;
                         var childDepth = child.getDepth(cx, cy);
