@@ -45,7 +45,9 @@ module SD3 {
         reorder(nodeId: any, oldBounds: RectangleSD3, render: IObjectRenderSD3): any {
             //this.renderOrder(order);
             var bounds = render.getBounds();
-            (<Element>nodeId).setAttribute("z", "" + render.getScreenDepth(bounds.cx, bounds.cy));
+            //(<Element>nodeId).setAttribute("z", "" + render.getScreenDepth(bounds.cx, bounds.cy));
+            var treeNode = <ViewSVGGroupTreeNodeSD3>nodeId;
+            treeNode._groupElement.setAttribute("z", "" + render.getScreenDepth(bounds.cx, bounds.cy));
             return this._proxied.reorder(nodeId, oldBounds, render);
         }
 

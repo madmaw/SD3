@@ -10,6 +10,7 @@
 
         constructor(render: IObjectRenderSD3, public _groupElement: Element, renderedNode?:Node) {
             this._combinedBounds = new RectangleSD3();
+            this._children = [];
             this.setRender(render);
             this.setRenderedNode(renderedNode);
         }
@@ -23,6 +24,31 @@
             if (renderedNode) {
                 this._groupElement.appendChild(renderedNode);
             }
+        }
+
+        public getDepth(sx: number, sy: number): number {
+            var result;
+            if (this._combinedBounds.contains(sx, sy)) {
+                var bounds = this._render.getBounds();
+                if (bounds.contains(sx, sy)) {
+                    result = this._render.getScreenDepth(sx, sy);
+                } else {
+                    result = null;
+                }
+                if (result == null) {
+                    // check the children
+                    for (var i in this._children) {
+                        var child = this._children[i];
+                        result = child.getDepth(sx, sy);
+                        if (result != null) {
+                            break;
+                        }
+                    }
+                }
+            } else {
+                result = null;
+            }
+            return result;
         }
 
         public setRender(render: IObjectRenderSD3) {
@@ -40,7 +66,7 @@
             }
         }
 
-        public checkOwnership(child: ViewSVGGroupTreeNodeSD3) {
+        public checkRemovalOwnership(child: ViewSVGGroupTreeNodeSD3) {
             var newBounds = new RectangleSD3();
             this.recalculateCombinedBounds(newBounds, child);
             if (this._parent != null && !child._combinedBounds.overlaps(newBounds)) {
@@ -57,8 +83,10 @@
                 this._groupElement.removeChild(child._groupElement);
                 // adjust the combined bounds
                 this.recalculateCombinedBounds();
-                // check that we still sit in the parent bounds
-                this._parent.checkOwnership(this);
+                if (this._parent) {
+                    // check that we still sit in the parent bounds
+                    this._parent.checkRemovalOwnership(this);
+                }
             }
 
         }
@@ -74,10 +102,38 @@
             }
         }
 
+        public checkAdditionOwnership(changedChild: ViewSVGGroupTreeNodeSD3) {
+            var changedBounds = changedChild._combinedBounds;
+            this._combinedBounds.union(changedBounds);
+            // TODO only do this if the bounds have actually changed
+            for (var i in this._children) {
+                var child = this._children[i];
+                if (child != changedChild) {
+                    var childBounds = child._combinedBounds;
+                    if (childBounds.overlaps(changedBounds)) {
+                        // there may be others that it overlaps with, but they will be handled by this change
+                        this.disown(child);
+                        this.insert(child, childBounds);
+                        break;
+                    }
+                }
+            }
+        }
+
         public forceAdopt(child: ViewSVGGroupTreeNodeSD3) {
+            child._parent = this;
             this._children.push(child);
-            this._combinedBounds.union(child._combinedBounds);
-            this._groupElement.appendChild(child._groupElement);
+            this.appendChildNode(child._groupElement);
+            // we may need to reposition this node if it has grown to overlap with siblings
+            this.checkAdditionOwnership(child);
+        }
+
+        public appendChildNode(node: Node) {
+            if (this._renderedNode) {
+                this._groupElement.insertBefore(node, this._renderedNode);
+            } else {
+                this._groupElement.appendChild(node);
+            }
         }
 
         public insert(treeNode: ViewSVGGroupTreeNodeSD3, bounds: RectangleSD3) {
@@ -85,8 +141,29 @@
             for (var i in this._children) {
                 var child = this._children[i];
                 if (child._combinedBounds.overlaps(bounds)) {
-                    // insert it into the child
-                    child.insert(treeNode, bounds);
+                    // is it infront-of or behind the child?
+                    var inject;
+                    var childBounds = child._render.getBounds();
+                    if (childBounds.overlaps(bounds)) {
+                        var intersection = new RectangleSD3();
+                        RectangleSD3.intersect(intersection, childBounds, bounds);
+                        var cx = intersection.cx;
+                        var cy = intersection.cy;
+                        var childDepth = child.getDepth(cx, cy);
+                        var depth = treeNode.getDepth(cx, cy);
+                        inject = childDepth > depth;
+                    } else {
+                        inject = false;
+                    }
+                    if (inject) {
+                        // replace the child
+                        this.disown(child);
+                        treeNode.forceAdopt(child);
+                        this.forceAdopt(treeNode);
+                    } else {
+                        // insert it into the child
+                        child.insert(treeNode, bounds);
+                    }
                     added = true;
                     break;
                 }
@@ -97,14 +174,22 @@
             }
         }
 
-        public removeSelf() {
+        public removeSelf(): boolean {
             // remove self from parent node
-            this._parent.disown(this);
-            for (var i in this._children) {
-                var child = this._children[i];
-                this._parent.adopt(child);
+            var result;
+            if (this._parent) {
+                this._parent.disown(this);
+                for (var i in this._children) {
+                    var child = this._children[i];
+                    this._groupElement.removeChild(child._groupElement);
+                    this._parent.adopt(child);
+                }
+                this._children = [];
+                result = true;
+            } else {
+                result = false;
             }
-            this._children = [];
+            return result;
         }
 
         public remove(render:IObjectRenderSD3, bounds:RectangleSD3): Node {
@@ -136,11 +221,7 @@
             var result;
             if (render == this._render) {
                 // replace
-                if (this._renderedNode != null) {
-                    this._groupElement.removeChild(this._renderedNode);
-                    this._groupElement.appendChild(node);
-                    this._renderedNode = node;
-                }
+                this.setRenderedNode(node);
                 result = true;
             } else {
                 // should only ever be one overlapping branch
@@ -164,6 +245,14 @@
                 this._groupElement.removeChild(branch._groupElement);
             }
             this._children = [];
+        }
+
+        public foreach(iterator:(treeNode:ViewSVGGroupTreeNodeSD3)=>void) {
+            iterator(this);
+            for (var i in this._children) {
+                var child = this._children[i];
+                child.foreach(iterator);
+            }
         }
 
     }

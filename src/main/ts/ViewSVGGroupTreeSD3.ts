@@ -2,10 +2,10 @@
 
     export class ViewSVGGroupTreeSD3 implements IViewSD3, IObjectRenderSD3 {
 
-        private _rootNode: ViewSVGGroupTreeNodeSD3;
-        private _bounds: RectangleSD3;
+        public _rootNode: ViewSVGGroupTreeNodeSD3;
+        public _bounds: RectangleSD3;
 
-        constructor(private _groupPrototype:Element) {
+        constructor(private _groupPrototype: Element) {
             this._bounds = new RectangleSD3();
             this._rootNode = new ViewSVGGroupTreeNodeSD3(this, <Element>_groupPrototype.cloneNode(false));
         }
@@ -63,8 +63,8 @@
         }
 
         getScreenDepth(x: number, y: number): number {
-            // it's always behind
-            return Number.MAX_VALUE;
+            // it's invisible
+            return null;
         }
 
         isIn(x: number, y: number): boolean {

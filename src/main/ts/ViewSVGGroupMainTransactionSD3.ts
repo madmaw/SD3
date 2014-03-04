@@ -10,8 +10,8 @@ module SD3 {
         private _viewRotationZDelta: number;
         
         constructor(private _view: ViewSVGGroupMainSD3) {
-            this._originalViewX = this._view._viewBounds.minX;
-            this._originalViewY = this._view._viewBounds.minY;
+            this._originalViewX = this._view._bounds.minX;
+            this._originalViewY = this._view._bounds.minY;
             this._originalViewScale = this._view._viewScale;
             this._originalViewRotationZ = this._view.camera.getRotationZ();
             this._tempPoint = new PointSD3();

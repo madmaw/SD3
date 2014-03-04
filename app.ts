@@ -59,19 +59,18 @@ window.onload = () => {
     svg.removeChild(debugRectPrototype);
     svg.removeChild(debugLinePrototype);
 
-    var orderedNodeList = new SD3.OrderedListSD3<SD3.ViewSVGGroupListNodeSD3>(SD3.ViewSVGGroupListNodeSD3.compare);
+    var groupElement = document.getElementById("group");
+    svg.removeChild(groupElement);
 
     var camera = new SD3.CameraSD3();
     camera.setRotationZ(0);
-    var view = new SD3.ViewSVGGroupMainSD3(contentElement, camera, orderedNodeList.empty());
+    var view = new SD3.ViewSVGGroupMainSD3(contentElement, camera, <Element>groupElement.cloneNode(true));
     view.setViewDimensions(w, h);
     view.setViewPosition(-w/2, -h/2);
     var viewMain = new SD3.ViewDebugProxySD3(view, debugContainer, <SVGRectElement><any>debugRectPrototype, <SVGLineElement><any>debugLinePrototype);
     viewMain.debugging = false;
     SD3.VISUAL_DEBUG = viewMain;
 
-    var groupElement = document.getElementById("group");
-    svg.removeChild(groupElement);
 
     var eastElement = document.getElementById('east');
     svg.removeChild(eastElement);
@@ -119,9 +118,9 @@ window.onload = () => {
     */
     var topObject = new SD3.ObjectHorizontalSurfaceSD3(topElement, camera, wallWidth, wallWidth);
 
-    var width = 5;
-    var height = 5;
-    var depth = 5;
+    var width = 2;
+    var height = 1;
+    var depth = 1;
 
     var unorderedGroupView = new SD3.ViewSVGGroupListSD3(groupElement, new SD3.UnorderedListSD3<SD3.ViewSVGGroupListNodeSD3>());
 
@@ -266,12 +265,12 @@ window.onload = () => {
         console.log(p);
         var e = document.elementFromPoint(event.gesture.center.pageX, event.gesture.center.pageY);
         console.log(e);
-        view._nodes.foreach(function (orderedNode: SD3.ViewSVGGroupListNodeSD3) {
+        view._rootNode.foreach(function (node: SD3.ViewSVGGroupTreeNodeSD3) {
             var screenPoint = view.getScreenPoint(event.gesture.center.pageX, event.gesture.center.pageY);
-            var bounds = orderedNode.bounds;
+            var bounds = node._render.getBounds();
             console.log(bounds);
             if (bounds.contains(screenPoint.x, screenPoint.y)) {
-                var z = orderedNode.render.getScreenDepth(screenPoint.x, screenPoint.y);
+                var z = node._render.getScreenDepth(screenPoint.x, screenPoint.y);
                 console.log(z);
             }
             return true;
@@ -364,5 +363,5 @@ window.onload = () => {
 
     //objectGroup.setObject("lift", boxObject, new SD3.PointSD3(0 * wallWidth, 1 * wallWidth, 0 * wallHeight), 0, true);
 
-    inc();
+    //inc();
 };
