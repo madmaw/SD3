@@ -40,7 +40,7 @@ module SD3 {
             } else {
                 // check the left
                 var ty = this._leftTan * dx;
-                if (ty > dy || this._leftRender == null) {
+                if (ty > dy) {
                     // use top
                     render = this._topRender;
                 } else {

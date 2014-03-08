@@ -1,22 +1,20 @@
-///<reference path="ViewSVGGroupTreeSD3.ts"/>
+///<reference path="ViewSVGGroupGraphSD3.ts"/>
 
 
 module SD3 {
 
-    export class ViewSVGGroupMainSD3 extends ViewSVGGroupTreeSD3 {
+    export class ViewSVGGroupMainSD3 extends ViewSVGGroupGraphSD3 {
 
         public _width: number;
         public _height: number;
         public _viewScale: number;
 
-        constructor(root: Element, public camera: CameraSD3, groupPrototype:Element) {
-            super(groupPrototype);
+        constructor(root: Element, public camera: CameraSD3) {
+            super(root);
             this._width = root.clientWidth;
             this._height = root.clientHeight;
             this._viewScale = 1;
             this.setViewPosition(0, 0);
-            // add it in
-            root.appendChild(this._rootNode._groupElement);
         }
 
         public setViewPosition(dx:number, dy:number) {

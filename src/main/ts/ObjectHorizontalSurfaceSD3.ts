@@ -30,11 +30,25 @@ module SD3 {
         }
 
         public getBounds(into: RectangleSD3, sx: number, sy: number, zRotation: number): boolean {
+            var a0 = zRotation + Math.PI / 4;
+            var a90 = zRotation - Math.PI / 4;
+            var sinZ = Math.max( Math.abs(Math.sin(a0)), Math.abs(Math.sin(a90)) );
+            var cosZ = Math.max( Math.abs(Math.cos(a0)), Math.abs(Math.cos(a90)) );
+
+            var dx = cosZ * this._maxDiagonalDiv2;
+            var dy = sinZ * this._maxDiagonalDiv2;
+
             var cosX = this._camera.getRotationXCos();
+            into.minX = sx - dx;
+            into.maxX = sx + dx;
+            into.minY = sy - dy * cosX;
+            into.maxY = sy + dy * cosX;
+            /*
             into.minX = sx - this._maxDiagonalDiv2;
             into.maxX = sx + this._maxDiagonalDiv2;
             into.minY = sy - this._maxDiagonalDiv2 * cosX;
             into.maxY = sy + this._maxDiagonalDiv2 * cosX;
+            */
             return true;
         }
 

@@ -45,12 +45,14 @@ window.onload = () => {
     svg.setAttribute("width", ""+w);
     svg.setAttribute("height", "" + h);
 
+    /*
     var oldLog = console.log;
     console.log = function () {
         oldLog.apply(console, arguments);
-        textarea.value += arguments[0] + '\n';
+        textarea.value += "" + arguments[0] + '\n';
         textarea.scrollTop = textarea.scrollHeight;
     };
+    */
     
     var contentElement = document.getElementById('content');
     var debugContainer = document.getElementById('debug-container');
@@ -64,7 +66,7 @@ window.onload = () => {
 
     var camera = new SD3.CameraSD3();
     camera.setRotationZ(0);
-    var view = new SD3.ViewSVGGroupMainSD3(contentElement, camera, <Element>groupElement.cloneNode(true));
+    var view = new SD3.ViewSVGGroupMainSD3(contentElement, camera);
     view.setViewDimensions(w, h);
     view.setViewPosition(-w/2, -h/2);
     var viewMain = new SD3.ViewDebugProxySD3(view, debugContainer, <SVGRectElement><any>debugRectPrototype, <SVGLineElement><any>debugLinePrototype);
@@ -119,8 +121,8 @@ window.onload = () => {
     var topObject = new SD3.ObjectHorizontalSurfaceSD3(topElement, camera, wallWidth, wallWidth);
 
     var width = 3;
-    var height = 2;
-    var depth = 1;
+    var height = 3;
+    var depth = 5;
 
     var unorderedGroupView = new SD3.ViewSVGGroupListSD3(groupElement, new SD3.UnorderedListSD3<SD3.ViewSVGGroupListNodeSD3>());
 
@@ -148,7 +150,7 @@ window.onload = () => {
     };
 
     var fill = function (x: number, y: number, z: number) {
-        if (x == 2 && y == 2) {
+        if (x == 1 && y == 1) {
             return z >= 0 && z < depth;
         } else {
             return x >= 0 && y >= 0 && z >= 0 && x < width && y < height && z < depth && z == depth - 1;
@@ -267,7 +269,7 @@ window.onload = () => {
         console.log(p);
         var e = document.elementFromPoint(event.gesture.center.pageX, event.gesture.center.pageY);
         console.log(e);
-        view._rootNode.foreach(function (node: SD3.ViewSVGGroupTreeNodeSD3) {
+        view.foreach(function (node: SD3.ViewSVGGroupGraphNodeSD3) {
             var screenPoint = view.getScreenPoint(event.gesture.center.pageX, event.gesture.center.pageY);
             var bounds = node._render.getBounds();
             console.log(bounds);
@@ -322,7 +324,8 @@ window.onload = () => {
         objectGroup.render(0, 0, 0, view.camera.getRotationZ(), true);
     };
     redraw.onclick = function () {
-        //view.invalidate();
+        view.invalidate();
+        view.redraw();
         objectGroup.render(0, 0, 0, view.camera.getRotationZ(), true);
     }
     clearDebug.onclick = function () {

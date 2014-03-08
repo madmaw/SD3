@@ -46,8 +46,9 @@ module SD3 {
             //this.renderOrder(order);
             var bounds = render.getBounds();
             //(<Element>nodeId).setAttribute("z", "" + render.getScreenDepth(bounds.cx, bounds.cy));
-            var treeNode = <ViewSVGGroupTreeNodeSD3>nodeId;
-            treeNode._groupElement.setAttribute("z", "" + render.getScreenDepth(bounds.cx, bounds.cy));
+            var node = <ViewSVGGroupGraphNodeSD3>nodeId;
+            var e = <Element>node._renderedNode;
+            e.setAttribute("z", "" + render.getScreenDepth(bounds.cx, bounds.cy));
             return this._proxied.reorder(nodeId, oldBounds, render);
         }
 

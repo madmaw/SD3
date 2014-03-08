@@ -31,7 +31,7 @@ module SD3 {
     }
 
     export function lineOverlaps(min1: number, max1: number, min2: number, max2: number): boolean {
-        return max1 >= min2 && max2 >= min1;
+        return max1 > min2 && max2 > min1;
     }
 
     export function enableBoundsDebug(outputNode: Node, debugRectPrototype: SVGRectElement) {
@@ -69,10 +69,15 @@ module SD3 {
                 return e1 == e2;
             };
         }
-        for (var i in a) {
+        for (var i = a.length; i > 0;) {
+            i--;
             var o = a[i];
             if (eqf(o, e)) {
-                a.splice(i, 1);
+                try {
+                    a.splice(i, 1);
+                } catch (e) {
+                    console.log(e);
+                }
                 return true;
             }
         }

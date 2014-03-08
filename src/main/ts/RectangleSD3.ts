@@ -80,11 +80,32 @@ module SD3 {
             this.maxY *= s;
         }
 
-        public union(rect: RectangleSD3, dx:number = 0, dy:number = 0): void {
-            this.minX = nullMin(this.minX, rect.minX + dx);
-            this.minY = nullMin(this.minY, rect.minY + dy);
-            this.maxX = nullMax(this.maxX, rect.maxX + dx);
-            this.maxY = nullMax(this.maxY, rect.maxY + dy);
+        public round() {
+            this.minX = Math.round(this.minX);
+            this.maxX = Math.round(this.maxX);
+            this.minY = Math.round(this.minY);
+            this.maxY = Math.round(this.maxY);
+        }
+
+        public union(rect: RectangleSD3, dx: number = 0, dy: number = 0): boolean {
+            var changed = false;
+            if (this.minX == null || rect.minX != null && rect.minX + dx < this.minX) {
+                this.minX = rect.minX + dx;
+                changed = true;
+            }
+            if (this.minY == null || rect.minY != null && rect.minY + dy < this.minY) {
+                this.minY = rect.minY + dy;
+                changed = true;
+            }
+            if (this.maxX == null || rect.maxX != null && rect.maxX + dx > this.maxX) {
+                this.maxX = rect.maxX + dx;
+                changed = true;
+            }
+            if (this.maxY == null || rect.maxY != null && rect.maxY + dy > this.maxY) {
+                this.maxY = rect.maxY + dy;
+                changed = true;
+            }
+            return changed;
         }
 
         public copy(rect: RectangleSD3, dx: number = 0, dy:number = 0): void {
@@ -93,7 +114,10 @@ module SD3 {
             this.maxX = rect.maxX + dx;
             this.maxY = rect.maxY + dy;
         }
-        
+
+        public equals(rect: RectangleSD3) {
+            return rect.maxX == this.maxX && rect.maxY == this.maxY && rect.minX == this.minX && rect.minY == this.minY;
+        }
         
     }
 } 
