@@ -54,7 +54,6 @@ module SD3 {
             this._previousBounds.copy(bounds);
             var visible = this.getBounds(bounds, sx, sy, zRotation);
             if (visible) {
-                bounds.round();
                 visible = this._view.isInView(bounds);
             } else if (visible == null) {
                 // TODO remove

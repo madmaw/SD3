@@ -69,6 +69,10 @@ module SD3 {
             return lineOverlaps(this.minX, this.maxX, rect.minX, rect.maxX) && lineOverlaps(this.minY, this.maxY, rect.minY, rect.maxY);
         }
 
+        public overlapsByMargin(rect: RectangleSD3, margin:number): boolean {
+            return lineOverlapsByMargin(this.minX, this.maxX, rect.minX, rect.maxX, margin) && lineOverlapsByMargin(this.minY, this.maxY, rect.minY, rect.maxY, margin);
+        }
+
         public contains(x: number, y: number): boolean {
             return this.minX <= x && this.maxX >= x && this.minY <= y && this.maxY >= y;
         }
@@ -81,10 +85,12 @@ module SD3 {
         }
 
         public round() {
+            /*
             this.minX = Math.round(this.minX);
             this.maxX = Math.round(this.maxX);
             this.minY = Math.round(this.minY);
             this.maxY = Math.round(this.maxY);
+            */
         }
 
         public union(rect: RectangleSD3, dx: number = 0, dy: number = 0): boolean {

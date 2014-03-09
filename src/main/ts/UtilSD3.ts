@@ -34,6 +34,10 @@ module SD3 {
         return max1 > min2 && max2 > min1;
     }
 
+    export function lineOverlapsByMargin(min1: number, max1: number, min2: number, max2: number, margin:number): boolean {
+        return max1 > min2 + margin && max2 > min1 + margin;
+    }
+
     export function enableBoundsDebug(outputNode: Node, debugRectPrototype: SVGRectElement) {
         DEBUG_OUTPUT_NODE = outputNode;
         DEBUG_RECT_PROTOTYPE = debugRectPrototype;

@@ -80,10 +80,14 @@
             }
         }
 
-        public adopt(child:ViewSVGGroupGraphNodeSD3) {
-            child._parents.push(this);
-            this._children.push(child);
-            this.unionCombinedBounds(child._combinedBounds);
+        public adopt(child: ViewSVGGroupGraphNodeSD3) {
+            if (child._parents.indexOf(this) < 0) {
+                child._parents.push(this);
+                this._children.push(child);
+                this.unionCombinedBounds(child._combinedBounds);
+            } else {
+                console.log("already a child!");
+            }
         }
 
 
@@ -95,19 +99,28 @@
                 if (combinedBoundsOverlaps) {
                     var replace;
                     var renderBounds = this._render.getBounds();
-                    var renderBoundsOverlaps = renderBounds.overlaps(treeNodeBounds);
+                    var renderBoundsOverlaps = renderBounds.overlapsByMargin(treeNodeBounds, 0.1);
                     if (renderBoundsOverlaps) {
 
                         var intersection = new RectangleSD3();
                         RectangleSD3.intersect(renderBounds, treeNodeBounds, intersection);
                         var cx = intersection.cx;
                         var cy = intersection.cy;
+                        
                         var depth = this._render.getScreenDepth(cx, cy);
-
+                        
                         if (depth != null) {
                             var treeNodeDepth = treeNode._render.getScreenDepth(cx, cy);
                             if (treeNodeDepth != null) {
-                                replace = treeNodeDepth < depth;
+                                var diff = treeNodeDepth - depth;
+                                var confidence = Math.min(intersection.width, intersection.height) * Math.abs(diff);
+                                if (confidence < 5) {
+                                    // almost equal, doesn't overlap
+                                    replace = false;
+                                    renderBoundsOverlaps = false;
+                                } else {
+                                    replace = diff < 0;
+                                }
                             } else {
                                 replace = true;
                             }
@@ -196,14 +209,17 @@
             }
         }
 
-        public invalidate() {
-            var children = this._children;
-            for (var i in children) {
-                var child = children[i];
-                child.invalidate();
+        public invalidate(recursive: boolean = true) {
+            if (recursive) {
+                var children = this._children;
+                for (var i in children) {
+                    var child = children[i];
+                    child.invalidate();
+                }
             }
             this._parents = [];
             this._children = [];
+            
         }
     }
  }

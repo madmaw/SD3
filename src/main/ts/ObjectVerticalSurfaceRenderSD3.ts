@@ -9,7 +9,7 @@ module SD3 {
         private _totalRotation: number;
         private _tanZ: number;
 
-        constructor() {
+        constructor(private _maxY:number) {
             super();
         }
 
@@ -19,9 +19,12 @@ module SD3 {
 
             var sdx = x - this._sx;
             var sdy = y - this._sy;
-            var yatdx = sdx * this._tanZ;
-            var dy = sdy / cosX - yatdx;
-            var sdz = -yatdx * sinX + dy * cosX;
+            var dzatdx = sdx * this._tanZ;
+            var sdyatdx = dzatdx * cosX;
+            var dy = (sdy - sdyatdx) / sinX;
+            //dy = Math.min(Math.max(0, dy), this._maxY);
+            var invTanX = Math.tan(Math.PI / 2 - this._camera.getRotationX());
+            var sdz = dy * invTanX - dzatdx * sinX;
             return this._sz + sdz;
         }
 
@@ -44,7 +47,7 @@ module SD3 {
         }
 
         public clone(): IObjectRenderSD3 {
-            return new ObjectVerticalSurfaceRenderSD3();
+            return new ObjectVerticalSurfaceRenderSD3(this._maxY);
         }
     }
 }

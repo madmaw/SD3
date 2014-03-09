@@ -17,6 +17,12 @@ module SD3 {
 
         public getScreenDepth(x: number, y: number): number {
 
+            // don't use subordinate renderers, work it out yourself (otherwise you get issues with hidden faces)
+
+            var top = false;
+            var left = false;
+            var right = false;
+            
             var dx = x - this._maxYX;
             var sdy = y - this._maxY;
             var dy = sdy / this._camera.getRotationXCos();
@@ -27,38 +33,90 @@ module SD3 {
                 if (ty > dy) {
                     // use top
                     render = this._topRender;
+                    top = true;
                 } else {
+                    right = true;
+                    
                     if (this._rightRender != null) {
                         // use right face
                         render = this._rightRender;
-                    } else if (this._leftRender != null) {
+                    } /* else if (this._leftRender != null) {
                         render = this._leftRender;
                     } else {
                         render = this._topRender;
-                    }
+                    } */
+                    
                 }
             } else {
                 // check the left
                 var ty = this._leftTan * dx;
                 if (ty > dy) {
                     // use top
+                    top = true;
                     render = this._topRender;
                 } else {
+                    left = true;
+                    
                     if (this._leftRender != null) {
                         // use left face
                         render = this._leftRender;
-                    } else if (this._rightRender != null) {
+                    } /* else if (this._rightRender != null) {
                         render = this._rightRender;
                     } else {
                         render = this._topRender;
-                    }
+                    }*/
+                    
                 }
             }
             var result: number;
-            if (render != null) {
-                result = this.getScreenDepthForRender(render, x, y);
+            if (top) {
+                // top
+                var tanX = this._camera.getRotationXTan();
+                var dsy = y - this._sy;
+                //var dy = dsy / cosX;
+                var dsz = dsy * tanX;
+                // minus it because....?
+                result = this._sz - dsz;
             } else {
-                result = null;
+                var asx;
+                var asy;
+                var asz;
+                var tanZ;
+                if (left) {
+                    // the left
+                    // TODO calculate the offset
+                    asx = this._sx;
+                    asy = this._sy;
+                    tanZ = this._leftTan;
+                } else {
+                    // the right 
+                    asx = this._maxYX;
+                    asy = this._maxY;
+                    asz = 
+                    tanZ = this._rightTan
+                }
+
+                var sinX = this._camera.getRotationXSin();
+                var cosX = this._camera.getRotationXCos();
+
+                var sdx = x - asx;
+                var sdy = y - asy;
+                var dzatdx = sdx * tanZ;
+                var sdyatdx = dzatdx * cosX;
+                var dy = (sdy - sdyatdx) / sinX;
+                //dy = Math.min(Math.max(0, dy), this._maxY);
+                var invTanX = Math.tan(Math.PI / 2 - this._camera.getRotationX());
+                var sdz = dy * invTanX - dzatdx * sinX;
+                result = this._sz + sdz;
+
+            }
+            if (render != null) {
+                var compareResult = this.getScreenDepthForRender(render, x, y);
+                var compareDiff = compareResult - result;
+                if (Math.abs(compareDiff) > 1) {
+                    console.log("results don't match!");
+                    var compareResult = this.getScreenDepthForRender(render, x, y);
+                }
             }
             return result;
         }

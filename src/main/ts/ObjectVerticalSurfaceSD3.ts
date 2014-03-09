@@ -11,7 +11,7 @@ module SD3 {
             private _width: number,
             private _depth: number,
             public _twoSided?: boolean,
-            render: AbstractObjectPhysicalRenderSD3 = new ObjectVerticalSurfaceRenderSD3()
+            render: AbstractObjectPhysicalRenderSD3 = new ObjectVerticalSurfaceRenderSD3(_depth)
         ) {
             super(element, camera, [
                 new PointSD3(0, 0, 0), 

@@ -76,7 +76,6 @@ module SD3 {
 
             if (inBounds) {
                 inBounds = this._view.isInView(bounds);
-                bounds.round();
             } else if (inBounds == null) {
                 // TODO remove
                 // a bit of a hack to allow results to be included wholesale 

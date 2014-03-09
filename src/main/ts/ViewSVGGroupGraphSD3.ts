@@ -4,10 +4,12 @@
 
         public _rootNodes: ViewSVGGroupGraphNodeSD3[];
         public _bounds: RectangleSD3;
+        private _allNodes: ViewSVGGroupGraphNodeSD3[];
 
         constructor(private _root:Element) {
             this._bounds = new RectangleSD3();
             this._rootNodes = [];
+            this._allNodes = [];
         }
 
         get root(): Element {
@@ -17,6 +19,7 @@
         add(node: Node, render: IObjectRenderSD3): any {
             // walk the tree
             var treeNode = new ViewSVGGroupGraphNodeSD3(render, node);
+            this._allNodes.push(treeNode);
             this.addTreeNode(treeNode);
             return treeNode;
         }
@@ -51,6 +54,7 @@
         remove(nodeId: any, previousBounds: RectangleSD3): void {
             var treeNode = <ViewSVGGroupGraphNodeSD3>nodeId;
             treeNode.removeSelf(this);
+            removeFromArray(treeNode, this._allNodes);
             this.redraw();
         }
 
@@ -89,9 +93,9 @@
          */
         invalidate(): void {
             // destroy graph
-            for (var i in this._rootNodes) {
-                var rootNode = this._rootNodes[i];
-                rootNode.invalidate();
+            for (var i in this._allNodes) {
+                var treeNode = this._allNodes[i];
+                treeNode.invalidate(false);
             }
             this._rootNodes = [];
         }
