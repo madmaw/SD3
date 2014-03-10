@@ -2,6 +2,8 @@
 
      export interface IObjectRenderSD3 {
 
+         id: string;
+
          getBounds(): RectangleSD3;
 
          getScreenDepth(x: number, y: number): number;

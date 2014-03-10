@@ -121,9 +121,9 @@ window.onload = () => {
     */
     var topObject = new SD3.ObjectHorizontalSurfaceSD3(topElement, camera, wallWidth, wallWidth);
 
-    var width = 3;
-    var height = 3;
-    var depth = 3;
+    var width = 5;
+    var height = 5;
+    var depth = 5;
 
     var unorderedGroupView = new SD3.ViewSVGGroupListSD3(groupElement, new SD3.UnorderedListSD3<SD3.ViewSVGGroupListNodeSD3>());
 
@@ -151,7 +151,7 @@ window.onload = () => {
     };
 
     var fill = function (x: number, y: number, z: number) {
-        if (x == 1 && y == 1) {
+        if (x == 2 && y == 2) {
             return z >= 0 && z < depth;
         } else {
             return x >= 0 && y >= 0 && z >= 0 && x < width && y < height && z < depth && z == depth - 1;
@@ -205,21 +205,18 @@ window.onload = () => {
     });
     hammer.on('dragstart', function (event: HammerEvent) {
         // do nothing
-        console.log("drag started");
         if (transaction == null) {
             transaction = view.begin();
         }
     });
     hammer.on('dragend', function (event: HammerEvent) {
         // do nothing
-        console.log("drag ended");
         transaction = null;
     });
     hammer.on('drag', function (event: HammerEvent) {
         if (transaction != null && !transforming) {
             transaction.setViewPositionOffset(-event.gesture.deltaX, -event.gesture.deltaY);
             objectGroup.render(0, 0, 0, view.camera.getRotationZ(), false);
-            console.log("dragged "+event.gesture.deltaX+","+event.gesture.deltaY);
         }
     });
     hammer.on('transformstart', function (event: HammerEvent) {
@@ -325,8 +322,8 @@ window.onload = () => {
     };
     redraw.onclick = function () {
         view.invalidate();
-        view.redraw();
         objectGroup.render(0, 0, 0, view.camera.getRotationZ(), true);
+        view.redraw();
     }
     clearDebug.onclick = function () {
         viewMain.clear();
@@ -380,10 +377,9 @@ window.onload = () => {
 
             //arrowRotaterElement.setAttribute("transform", "rotate(" + (dTime / 100) % 360 + ")");
             //objectGroup.setObject("arrow", arrowObject, new SD3.PointSD3(width * wallWidth / 2, height * wallHeight / 2, -80), -(dTime / 4000) % (Math.PI * 2), true);
-            //objectGroup.setObject("lift", boxObject, new SD3.PointSD3(2 * wallWidth, 3 * wallWidth, (depth - 2) * (wallHeight / 2) + ((depth - 2) * wallHeight / 2) * Math.sin(dTime / 4000)), 0 * -(dTime / 100) % (Math.PI * 2), true);
-            objectGroup.setObject("slider", boxObject2, new SD3.PointSD3(wallWidth + ((width) * wallWidth / 2) * Math.sin(dTime / 4000), 0 * wallWidth, wallHeight * (depth - 2)), 0, false);
             view.invalidate();
-            view.redraw();
+            objectGroup.setObject("lift", boxObject, new SD3.PointSD3(2 * wallWidth, 3 * wallWidth, (depth - 2) * (wallHeight / 2) + ((depth - 2) * wallHeight / 2) * Math.sin(dTime / 4000)), 0 * -(dTime / 100) % (Math.PI * 2), true);
+            objectGroup.setObject("slider", boxObject2, new SD3.PointSD3(wallWidth + ((width) * wallWidth / 2) * Math.sin(dTime / 4000), 3 * wallWidth, wallHeight * (depth - 2)), 0, false);
             objectGroup.render(0, 0, 0, view.camera.getRotationZ(), true);
             //objectGroup.setObject("a", objectGroupA, new SD3.PointSD3(wallWidth * 2, 0, 0), (zRotation * 2) % (Math.PI * 2));
             //arrowObject.zRotation = -(zRotation * 2) % (Math.PI * 2);

@@ -63,7 +63,7 @@ module SD3 {
             var result: CompositeObjectRenderSD3;
             if (visible) {
                 this._render.reset(sx, sy, sz, zRotation);
-                super.renderInto(this._render, 0, 0, 0, zRotation, false);
+                this.renderInto(this._render, 0, 0, 0, zRotation, false);
                 visible = !this._render.empty;
             }
             if( visible ) {

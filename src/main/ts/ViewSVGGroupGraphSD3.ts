@@ -4,12 +4,12 @@
 
         public _rootNodes: ViewSVGGroupGraphNodeSD3[];
         public _bounds: RectangleSD3;
-        private _allNodes: ViewSVGGroupGraphNodeSD3[];
+        private _allNodes: {[_: string ]:ViewSVGGroupGraphNodeSD3; };
 
         constructor(private _root:Element) {
             this._bounds = new RectangleSD3();
             this._rootNodes = [];
-            this._allNodes = [];
+            this._allNodes = {};
         }
 
         get root(): Element {
@@ -19,7 +19,9 @@
         add(node: Node, render: IObjectRenderSD3): any {
             // walk the tree
             var treeNode = new ViewSVGGroupGraphNodeSD3(render, node);
-            this._allNodes.push(treeNode);
+            var renderId = render.id;
+            (<Element>node).setAttribute("renderId", renderId);
+            this._allNodes[renderId] = treeNode;
             this.addTreeNode(treeNode);
             return treeNode;
         }
@@ -29,10 +31,12 @@
             var addingBounds = adding._render.getBounds();
             var addingSeparate = false;
             var added = false;
+            var path = [];
+            // TODO indexof is probably native and quicker
             for (var i = this._rootNodes.length; i > 0;) {
                 i--;
                 var rootNode = this._rootNodes[i];
-                var replacement = rootNode.insert(adding, addingBounds);
+                var replacement = rootNode.insert(adding, addingBounds, path);
                 if (replacement) {
                     if (replacement.node == adding) {
                         if (!replacement.separate) {
@@ -47,30 +51,93 @@
             if (!added) {
                 this._rootNodes.push(adding);
             }
-            this.redraw();
+            this.insertInOrder(treeNode, path);
+        }
 
+        insertInOrder(treeNode: ViewSVGGroupGraphNodeSD3, path: ViewSVGGroupGraphNodeSD3[]) {
+            if (path.indexOf(treeNode) < 0) {
+                path.push(treeNode);
+                // 
+                var childNodes = this._root.childNodes;
+                var maxIndex: number = null;
+                var parents = treeNode._parents;
+                outer: for (var i = 0; i < childNodes.length; i++) {
+                    var childNode = childNodes.item(i);
+                    // is it a parent?
+                    if (maxIndex == null) {
+                        // TODO could just break outer here
+                        for (var j in parents) {
+                            var parent = parents[j];
+                            if (parent._renderedNode == childNode) {
+                                maxIndex = i;
+                                break outer;
+                            }
+                        }
+                    }
+                }
+                // insert just after the minimum index
+                if (maxIndex != null) {
+                    var minParentNode = childNodes.item(maxIndex);
+                    this._root.insertBefore(treeNode._renderedNode, minParentNode);
+
+                    // TODO child nodes will have changed size, do we need to get it again?
+                    // +2 because we want to skip ourselves and the node that we just added ourselves behind
+                    var displacedChildren = [];
+                    var children = treeNode._children;
+                    for (var i = childNodes.length; i > maxIndex + 2;) {
+                        i--;
+                        var childNode = childNodes[i];
+                        for (var j in children) {
+                            var child = children[j];
+                            if (child._renderedNode == childNode) {
+                                displacedChildren.push(child);
+                                break;
+                            }
+                        }
+                    }
+                    for (var j in displacedChildren) {
+                        var displacedChild = displacedChildren[j];
+                        this.insertInOrder(displacedChild, path);
+                    }
+                } else {
+                    this._root.appendChild(treeNode._renderedNode);
+                }
+                path.splice(path.length - 1, 1);
+            }
         }
 
         remove(nodeId: any, previousBounds: RectangleSD3): void {
             var treeNode = <ViewSVGGroupGraphNodeSD3>nodeId;
+            this.removeTreeNode(treeNode);
+            delete this._allNodes[treeNode._render.id];
+            //this.redraw();
+        }
+
+        removeTreeNode(treeNode: ViewSVGGroupGraphNodeSD3) {
             treeNode.removeSelf(this);
-            removeFromArray(treeNode, this._allNodes);
-            this.redraw();
+            // don't need to reorder the children - they're still valid
+            // remove the render
+            this._root.removeChild(treeNode._renderedNode);
         }
 
         reorder(nodeId: any, previousBounds: RectangleSD3, render: IObjectRenderSD3): any {
             var treeNode = <ViewSVGGroupGraphNodeSD3>nodeId;
-            treeNode.removeSelf(this);
             treeNode.setRender(render);
+            this.removeTreeNode(treeNode);
             this.addTreeNode(treeNode);
-            this.redraw();
             return treeNode;
         }
 
         replace(nodeId: any, node: Node): any {
             var treeNode = <ViewSVGGroupGraphNodeSD3>nodeId;
+            var oldNode = treeNode._renderedNode;
             treeNode._renderedNode = node;
-            this.redraw();
+            if (oldNode) {
+                this._root.insertBefore(node, oldNode);
+                this._root.removeChild(oldNode);
+            } else {
+                this.redraw();
+            }
             return treeNode;
         }
 

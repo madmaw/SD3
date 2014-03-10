@@ -1,6 +1,8 @@
-﻿ module SD3 {
-
+﻿module SD3 {
+    
     export class ViewSVGGroupGraphNodeSD3 {
+        
+        public static OVERLAP_MARGIN: number = 0.1;
 
         public _combinedBounds: RectangleSD3;
         public _parents: ViewSVGGroupGraphNodeSD3[];
@@ -85,21 +87,21 @@
                 child._parents.push(this);
                 this._children.push(child);
                 this.unionCombinedBounds(child._combinedBounds);
-            } else {
-                console.log("already a child!");
             }
         }
 
 
-        public insert(treeNode: ViewSVGGroupGraphNodeSD3, treeNodeBounds: RectangleSD3): { separate: boolean; node: ViewSVGGroupGraphNodeSD3; } {
+        public insert(treeNode: ViewSVGGroupGraphNodeSD3, treeNodeBounds: RectangleSD3, path:ViewSVGGroupGraphNodeSD3[]): { separate: boolean; node: ViewSVGGroupGraphNodeSD3; } {
             var result;
-            if (this != treeNode) {
+            path.push(this);
+            // should never happen unless the objects phsically overlap
+            if (path.indexOf(treeNode) < 0) {
                 var combinedBounds = this._combinedBounds;
-                var combinedBoundsOverlaps = combinedBounds.overlaps(treeNode._combinedBounds);
+                var combinedBoundsOverlaps = combinedBounds.overlapsByMargin(treeNode._combinedBounds, ViewSVGGroupGraphNodeSD3.OVERLAP_MARGIN);
                 if (combinedBoundsOverlaps) {
                     var replace;
                     var renderBounds = this._render.getBounds();
-                    var renderBoundsOverlaps = renderBounds.overlapsByMargin(treeNodeBounds, 0.1);
+                    var renderBoundsOverlaps = renderBounds.overlapsByMargin(treeNodeBounds, ViewSVGGroupGraphNodeSD3.OVERLAP_MARGIN);
                     if (renderBoundsOverlaps) {
 
                         var intersection = new RectangleSD3();
@@ -144,8 +146,8 @@
                             i--;
                             var child = this._children[i];
                             var childCombinedBounds = child._combinedBounds;
-                            if (childCombinedBounds.overlaps(addingBounds)) {
-                                var newChild = child.insert(adding, addingBounds);
+                            if (childCombinedBounds.overlapsByMargin(addingBounds, ViewSVGGroupGraphNodeSD3.OVERLAP_MARGIN)) {
+                                var newChild = child.insert(adding, addingBounds, path);
                                 if (newChild) {
                                     if (newChild.node == adding) {
                                         // TODO check if it was added or was separate (do not disown child if it was separate)
@@ -177,6 +179,8 @@
             } else {
                 result = null;
             }
+            // remove self from path
+            path.splice(path.length - 1, 1);
             return result;
         }
 

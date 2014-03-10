@@ -5,11 +5,19 @@ module SD3 {
 
     export class AbstractObjectPhysicalRenderSD3 implements IObjectRenderSD3 {
 
+        public static nextUniqueId: number = 1;
+
+        public static getUniqueId(): string {
+            var uniqueId = ''+AbstractObjectPhysicalRenderSD3.nextUniqueId;
+            AbstractObjectPhysicalRenderSD3.nextUniqueId++;
+            return uniqueId;
+        }
+
         public _bounds: RectangleSD3;
         public _object: IObjectSD3;
         public _camera: CameraSD3;
 
-        constructor() {
+        constructor(public id:string = AbstractObjectPhysicalRenderSD3.getUniqueId()) {
             this._bounds = new RectangleSD3();
         }
 

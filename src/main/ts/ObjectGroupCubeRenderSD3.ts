@@ -3,15 +3,22 @@ module SD3 {
     export class ObjectGroupCubeRenderSD3 extends CompositeObjectRenderSD3 {
 
         private _zRotation: number;
-        private _maxYX: number;
+
         private _maxY: number;
+        private _maxYX: number;
+        private _maxYZ: number;
+
+        private _minX: number;
+        private _minXY: number;
+        private _minXZ: number;
+
         private _rightTan: number;
         private _rightRender: IObjectRenderSD3;
         private _leftTan: number;
         private _leftRender: IObjectRenderSD3;
         private _topRender: IObjectRenderSD3;
 
-        constructor() {
+        constructor(private _depth:number) {
             super();
         }
 
@@ -85,14 +92,15 @@ module SD3 {
                 if (left) {
                     // the left
                     // TODO calculate the offset
-                    asx = this._sx;
-                    asy = this._sy;
+                    asx = this._minX;
+                    asy = this._minXY;
+                    asz = this._minXZ;
                     tanZ = this._leftTan;
                 } else {
                     // the right 
                     asx = this._maxYX;
                     asy = this._maxY;
-                    asz = 
+                    asz = this._maxYZ;
                     tanZ = this._rightTan
                 }
 
@@ -104,10 +112,12 @@ module SD3 {
                 var dzatdx = sdx * tanZ;
                 var sdyatdx = dzatdx * cosX;
                 var dy = (sdy - sdyatdx) / sinX;
-                //dy = Math.min(Math.max(0, dy), this._maxY);
+
+                //dy = Math.min(Math.max(0, dy), this._depth);
+
                 var invTanX = Math.tan(Math.PI / 2 - this._camera.getRotationX());
                 var sdz = dy * invTanX - dzatdx * sinX;
-                result = this._sz + sdz;
+                result = asz + sdz;
 
             }
             if (render != null) {
@@ -122,8 +132,8 @@ module SD3 {
         }
 
         public reset(sx: number, sy: number, sz: number, zRotation: number): void {
-            super.reset(sx, sy, sz, zRotation);
             this._zRotation = zRotation;
+            super.reset(sx, sy, sz, zRotation);
         }
 
         public onLoaded() {
@@ -132,24 +142,35 @@ module SD3 {
             var dy = cube._height / 2;
             var h = Math.sqrt(dx * dx + dy * dy);
             var angle = this._zRotation - Math.PI / 4;
-            var maxAngle = null;
+            var maxYAngle = null;
             var maxY = null;
             var maxFace = null;
+            
+            
             for (var i in ObjectGroupCubeSD3.CARDINAL_FACES) {
                 var sin = Math.sin(angle);
                 var ry = sin * h;
                 if (maxY == null || ry > maxY) {
                     maxY = ry;
-                    maxAngle = angle;
+                    maxYAngle = angle;
                     maxFace = i;
                 }
                 angle += Math.PI / 2;
             }
             this._maxY = this._sy + maxY * this._camera.getRotationXCos();
-            this._maxYX = this._sx + Math.cos(maxAngle) * h;
+            this._maxYX = this._sx + Math.cos(maxYAngle) * h;
+            this._maxYZ = this._sz - maxY * this._camera.getRotationXSin();
+
+            var minXAngle = maxYAngle + Math.PI / 2;
+            var minX = Math.cos(minXAngle) * h;
+            var minXY = Math.sin(minXAngle) * h;
+            this._minX = this._sx + minX;
+            this._minXY = this._sy + minXY * this._camera.getRotationXCos();
+            this._minXZ = this._sz - minXY * this._camera.getRotationXSin();
+
             var leftFace = ObjectGroupCubeSD3.CARDINAL_FACES[maxFace];
             this._leftRender = this._renders[leftFace];
-            var leftAngle = maxAngle + Math.PI * 3 / 4;
+            var leftAngle = maxYAngle + Math.PI * 3 / 4;
             this._leftTan = Math.tan(leftAngle);
 
             var rightFaceIndex = maxFace - 1;
@@ -158,7 +179,7 @@ module SD3 {
             }
             var rightFace = ObjectGroupCubeSD3.CARDINAL_FACES[rightFaceIndex];
             this._rightRender = this._renders[rightFace];
-            var rightAngle = maxAngle - Math.PI * 3 / 4;
+            var rightAngle = maxYAngle - Math.PI * 3 / 4;
             this._rightTan = Math.tan(rightAngle);
 
             var topFace = ObjectGroupCubeSD3.FACE_TOP;
@@ -167,7 +188,7 @@ module SD3 {
         }
 
         public clone(): IObjectRenderSD3 {
-            return new ObjectGroupCubeRenderSD3();
+            return new ObjectGroupCubeRenderSD3(this._depth);
         }
 
     }

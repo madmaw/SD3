@@ -22,6 +22,7 @@ module SD3 {
             var dzatdx = sdx * this._tanZ;
             var sdyatdx = dzatdx * cosX;
             var dy = (sdy - sdyatdx) / sinX;
+            // limit
             //dy = Math.min(Math.max(0, dy), this._maxY);
             var invTanX = Math.tan(Math.PI / 2 - this._camera.getRotationX());
             var sdz = dy * invTanX - dzatdx * sinX;

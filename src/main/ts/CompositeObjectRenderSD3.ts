@@ -12,7 +12,7 @@ module SD3 {
         public _object: IObjectSD3;
         public _camera: CameraSD3;
 
-        constructor() {
+        constructor(public id: string = AbstractObjectPhysicalRenderSD3.getUniqueId()) {
             this._bounds = new RectangleSD3();
         }
 
