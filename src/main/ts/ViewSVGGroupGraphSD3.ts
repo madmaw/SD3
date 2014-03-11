@@ -20,7 +20,7 @@
             // walk the tree
             var treeNode = new ViewSVGGroupGraphNodeSD3(render, node);
             var renderId = render.id;
-            (<Element>node).setAttribute("renderId", renderId);
+            (<Element>node).setAttribute("id", renderId);
             this._allNodes[renderId] = treeNode;
             this.addTreeNode(treeNode);
             return treeNode;
@@ -41,6 +41,7 @@
                     if (replacement.node == adding) {
                         if (!replacement.separate) {
                             this._rootNodes.splice(i, 1);
+                            adding.adopt(rootNode);
                         }
                         addingSeparate = addingSeparate || replacement.separate;
                     } else {
@@ -50,6 +51,9 @@
             }
             if (!added) {
                 this._rootNodes.push(adding);
+                if (this._rootNodes.length > 10) {
+                    console.log("getting a lot of root nodes ("+this._rootNodes.length+")!");
+                }
             }
             this.insertInOrder(treeNode, path);
         }
@@ -108,16 +112,31 @@
 
         remove(nodeId: any, previousBounds: RectangleSD3): void {
             var treeNode = <ViewSVGGroupGraphNodeSD3>nodeId;
-            this.removeTreeNode(treeNode);
             delete this._allNodes[treeNode._render.id];
+            this.removeTreeNode(treeNode);
             //this.redraw();
         }
 
+        removeRootNode(treeNode: ViewSVGGroupGraphNodeSD3) {
+            var index = this._rootNodes.indexOf(treeNode);
+            if (index >= 0) {
+                // remove the root first otherwise all the children will just get added to it again!
+                this._rootNodes.splice(index, 1);
+            }
+        }
+
         removeTreeNode(treeNode: ViewSVGGroupGraphNodeSD3) {
+            this.removeRootNode(treeNode);
             treeNode.removeSelf(this);
             // don't need to reorder the children - they're still valid
             // remove the render
-            this._root.removeChild(treeNode._renderedNode);
+            try {
+                this._root.removeChild(treeNode._renderedNode);
+            } catch (e) {
+                console.log("tried to remove non-existant node");
+                console.log(e);
+            }
+            //this.redraw();
         }
 
         reorder(nodeId: any, previousBounds: RectangleSD3, render: IObjectRenderSD3): any {
@@ -175,15 +194,21 @@
                 if (renderedNode) {
                     this._root.appendChild(renderedNode);
                 }
+                return true;
             });
         }
 
-        foreach(f: (node: ViewSVGGroupGraphNodeSD3) => void) {
+        foreach(f: (node: ViewSVGGroupGraphNodeSD3) => boolean): boolean {
             var walked = [];
+            var result = true;
             for (var i in this._rootNodes) {
                 var rootNode = this._rootNodes[i];
-                rootNode.foreach(f, walked);
+                result = rootNode.foreach(f, walked);
+                if (!result) {
+                    break;
+                }
             }
+            return result;
         }
 
         clone() {

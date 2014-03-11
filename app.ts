@@ -36,6 +36,7 @@ window.onload = () => {
     var tiltUp = <HTMLButtonElement>document.getElementById("tilt-up");
     var tiltBack = <HTMLButtonElement>document.getElementById("tilt-back");
     var redraw = <HTMLButtonElement>document.getElementById("redraw");
+    var rebuild = <HTMLButtonElement>document.getElementById("rebuild");
     var clearDebug = <HTMLButtonElement>document.getElementById("clear-debug");
     var toggleDebug = <HTMLButtonElement>document.getElementById("toggle-debug");
     var incButton = <HTMLButtonElement>document.getElementById("inc");
@@ -251,13 +252,26 @@ window.onload = () => {
     hammer.on('doubletap', function (event: HammerEvent) {
         var tx = view.begin();
         //tx.setViewRotationZOffset(Math.PI / 12, event.gesture.center.pageX, event.gesture.center.pageY);
-        tx.multiplyViewScale(1/view._viewScale, event.gesture.center.pageX, event.gesture.center.pageY);
-        objectGroup.render(0, 0, 0, view.camera.getRotationZ(), true);
+        //tx.multiplyViewScale(1/view._viewScale, event.gesture.center.pageX, event.gesture.center.pageY);
+        //objectGroup.render(0, 0, 0, view.camera.getRotationZ(), true);
         /*
         var tx = view.begin();
         tx.setViewRotationZOffset(Math.PI / 12, event.gesture.center.pageX, event.gesture.center.pageY);
         objectGroup.render(0, 0, 0, view.camera.getRotationZ(), viewMain, true);
         */
+        view.foreach(function (node: SD3.ViewSVGGroupGraphNodeSD3) {
+            var screenPoint = view.getScreenPoint(event.gesture.center.pageX, event.gesture.center.pageY);
+            var bounds = node._render.getBounds();
+            console.log(bounds);
+            if (bounds.contains(screenPoint.x, screenPoint.y)) {
+                view.removeTreeNode(node);
+                view.redraw();
+                return false;
+            } else {
+                return true;
+            }
+        });
+
     });
 
     hammer.on('tap', function (event: HammerEvent) {
@@ -321,6 +335,11 @@ window.onload = () => {
         objectGroup.render(0, 0, 0, view.camera.getRotationZ(), true);
     };
     redraw.onclick = function () {
+        //view.invalidate();
+        //objectGroup.render(0, 0, 0, view.camera.getRotationZ(), true);
+        view.redraw();
+    }
+    rebuild.onclick = function () {
         view.invalidate();
         objectGroup.render(0, 0, 0, view.camera.getRotationZ(), true);
         view.redraw();
@@ -376,11 +395,10 @@ window.onload = () => {
             //zRotation = -dTime / 4000;
 
             //arrowRotaterElement.setAttribute("transform", "rotate(" + (dTime / 100) % 360 + ")");
-            //objectGroup.setObject("arrow", arrowObject, new SD3.PointSD3(width * wallWidth / 2, height * wallHeight / 2, -80), -(dTime / 4000) % (Math.PI * 2), true);
-            view.invalidate();
-            objectGroup.setObject("lift", boxObject, new SD3.PointSD3(2 * wallWidth, 3 * wallWidth, (depth - 2) * (wallHeight / 2) + ((depth - 2) * wallHeight / 2) * Math.sin(dTime / 4000)), 0 * -(dTime / 100) % (Math.PI * 2), true);
-            objectGroup.setObject("slider", boxObject2, new SD3.PointSD3(wallWidth + ((width) * wallWidth / 2) * Math.sin(dTime / 4000), 3 * wallWidth, wallHeight * (depth - 2)), 0, false);
-            objectGroup.render(0, 0, 0, view.camera.getRotationZ(), true);
+            objectGroup.setObject("arrow", arrowObject, new SD3.PointSD3(width * wallWidth / 2, height * wallHeight / 2, -80), -(dTime / 4000) % (Math.PI * 2), true);
+            objectGroup.setObject("lift", boxObject, new SD3.PointSD3(2 * wallWidth, 1 * wallWidth, (depth - 2) * (wallHeight / 2) + ((depth - 2) * wallHeight / 2) * Math.sin(dTime / 4000)), 0 * -(dTime / 100) % (Math.PI * 2), true);
+            objectGroup.setObject("slider", boxObject2, new SD3.PointSD3(wallWidth + ((width) * wallWidth / 2) * Math.sin(dTime / 4000), 1 * wallWidth, wallHeight * (depth - 2)), 0, true);
+            //objectGroup.render(0, 0, 0, view.camera.getRotationZ(), true);
             //objectGroup.setObject("a", objectGroupA, new SD3.PointSD3(wallWidth * 2, 0, 0), (zRotation * 2) % (Math.PI * 2));
             //arrowObject.zRotation = -(zRotation * 2) % (Math.PI * 2);
 

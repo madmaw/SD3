@@ -83,6 +83,12 @@
         }
 
         public adopt(child: ViewSVGGroupGraphNodeSD3) {
+            if (this.isDescendant(child)) {
+                throw "I'm your child you sick fuck";
+            }
+            if (child.isAncestor(this)) {
+                throw "that's your father you sick fuck";
+            }
             if (child._parents.indexOf(this) < 0) {
                 child._parents.push(this);
                 this._children.push(child);
@@ -94,8 +100,11 @@
         public insert(treeNode: ViewSVGGroupGraphNodeSD3, treeNodeBounds: RectangleSD3, path:ViewSVGGroupGraphNodeSD3[]): { separate: boolean; node: ViewSVGGroupGraphNodeSD3; } {
             var result;
             path.push(this);
+            // TODO remove this check?
             // should never happen unless the objects phsically overlap
-            if (path.indexOf(treeNode) < 0) {
+            var isInPath = path.indexOf(treeNode) >= 0;
+            if (!isInPath) {
+            
                 var combinedBounds = this._combinedBounds;
                 var combinedBoundsOverlaps = combinedBounds.overlapsByMargin(treeNode._combinedBounds, ViewSVGGroupGraphNodeSD3.OVERLAP_MARGIN);
                 if (combinedBoundsOverlaps) {
@@ -133,7 +142,8 @@
                         replace = false;
                     }
                     if (replace) {
-                        treeNode.adopt(this);
+                        // let the caller do this...
+                        //treeNode.adopt(this);
                         // at the top level we want this to replace the value
                         result = { separate: false, node: treeNode };
                     } else {
@@ -147,12 +157,15 @@
                             var child = this._children[i];
                             var childCombinedBounds = child._combinedBounds;
                             if (childCombinedBounds.overlapsByMargin(addingBounds, ViewSVGGroupGraphNodeSD3.OVERLAP_MARGIN)) {
+                                
                                 var newChild = child.insert(adding, addingBounds, path);
+
                                 if (newChild) {
                                     if (newChild.node == adding) {
                                         // TODO check if it was added or was separate (do not disown child if it was separate)
                                         if (renderBoundsOverlaps && !newChild.separate) {
                                             this.disown(child);
+                                            adding.adopt(child);
                                         }
                                         //addingSeparate = newChild.separate || addingSeparate;
                                     } else {
@@ -184,33 +197,56 @@
             return result;
         }
 
-        public removeSelf(graph:ViewSVGGroupGraphSD3) {
+        public removeSelf(graph: ViewSVGGroupGraphSD3) {
+            // TODO there's probably a more efficient way of doing this
             // remove self from parent node
-            for (var i in this._parents) {
+            var all = [];
+            this.disintegrate(all);
+            for (var i in all) {
+                var node = all[i];
+                graph.removeRootNode(node);
+                graph.addTreeNode(node);
+            }
+        }
+
+        public disintegrate(descendants: ViewSVGGroupGraphNodeSD3[]) {
+            descendants.push(this);
+            for (var i = this._children.length; i > 0;) {
+                i--;
+                var child = this._children[i];
+                if (child) {
+                    child.disintegrate(descendants);
+                }
+            }
+            // remove self from all parents
+            for (var i = this._parents.length; i > 0;) {
+                i--;
                 var parent = this._parents[i];
                 parent.disown(this);
             }
-            for (var i in this._children) {
-                // NOTE we are adding the child trees - seems wrong
-                var child = this._children[i];
-                removeFromArray(this, child._parents);
-                graph.addTreeNode(child);
-            }
             this._children = [];
+            this._parents = [];
             this._combinedBounds.copy(this._render.getBounds());
         }
 
 
-        public foreach(iterator: (treeNode: ViewSVGGroupGraphNodeSD3) => void, walked:ViewSVGGroupGraphNodeSD3[] = []) {
+        public foreach(iterator: (treeNode: ViewSVGGroupGraphNodeSD3) => boolean, walked: ViewSVGGroupGraphNodeSD3[]= []): boolean {
+            var result = true;
             if (walked.indexOf(this) < 0) {
                 walked.push(this);
                 for (var i in this._children) {
                     var child = this._children[i];
-                    child.foreach(iterator, walked);
+                    result = child.foreach(iterator, walked);
+                    if (!result) {
+                        break;
+                    }
                 }
-                // leaf-first
-                iterator(this);
+                if (result) {
+                    // leaf-first
+                    result = iterator(this);
+                }
             }
+            return result;
         }
 
         public invalidate(recursive: boolean = true) {
@@ -224,6 +260,41 @@
             this._parents = [];
             this._children = [];
             
+        }
+
+        public isAncestor(treeNode: ViewSVGGroupGraphNodeSD3): boolean {
+            var result;
+            if (this._children.indexOf(treeNode) >= 0) {
+                result = true;
+            } else {
+                result = false;
+                for (var i in this._children) {
+                    var child = this._children[i];
+                    if (child.isAncestor(treeNode)) {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
+
+        public isDescendant(treeNode: ViewSVGGroupGraphNodeSD3): boolean {
+            var result;
+            if (this._parents.indexOf(treeNode) >= 0) {
+                result = true;
+            } else {
+                result = false;
+                // check parent's parents
+                for (var i in this._parents) {
+                    var parent = this._parents[i];
+                    if (parent.isDescendant(treeNode)) {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+            return result;
         }
     }
  }
