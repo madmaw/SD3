@@ -395,9 +395,9 @@ window.onload = () => {
             //zRotation = -dTime / 4000;
 
             //arrowRotaterElement.setAttribute("transform", "rotate(" + (dTime / 100) % 360 + ")");
-            objectGroup.setObject("arrow", arrowObject, new SD3.PointSD3(width * wallWidth / 2, height * wallHeight / 2, -80), -(dTime / 4000) % (Math.PI * 2), true);
-            objectGroup.setObject("lift", boxObject, new SD3.PointSD3(2 * wallWidth, 1 * wallWidth, (depth - 2) * (wallHeight / 2) + ((depth - 2) * wallHeight / 2) * Math.sin(dTime / 4000)), 0 * -(dTime / 100) % (Math.PI * 2), true);
-            objectGroup.setObject("slider", boxObject2, new SD3.PointSD3(wallWidth + ((width) * wallWidth / 2) * Math.sin(dTime / 4000), 1 * wallWidth, wallHeight * (depth - 2)), 0, true);
+            //objectGroup.setObject("arrow", arrowObject, new SD3.PointSD3(width * wallWidth / 2, height * wallHeight / 2, -80), -(dTime / 4000) % (Math.PI * 2), true);
+            objectGroup.setObject("lift", boxObject, new SD3.PointSD3(2 * wallWidth, 1 * wallWidth, (depth - 2) * (wallHeight / 2) + ((depth - 2) * wallHeight / 2) * Math.cos(dTime / 4000)), 0 * -(dTime / 10000) % (Math.PI * 2), true);
+            objectGroup.setObject("slider", boxObject2, new SD3.PointSD3(wallWidth + ((width) * wallWidth / 2) * Math.sin(dTime / 4000), 3 * wallWidth, wallHeight * (depth - 2)), 0, true);
             //objectGroup.render(0, 0, 0, view.camera.getRotationZ(), true);
             //objectGroup.setObject("a", objectGroupA, new SD3.PointSD3(wallWidth * 2, 0, 0), (zRotation * 2) % (Math.PI * 2));
             //arrowObject.zRotation = -(zRotation * 2) % (Math.PI * 2);

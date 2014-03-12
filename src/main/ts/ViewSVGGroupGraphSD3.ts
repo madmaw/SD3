@@ -69,7 +69,6 @@
                     var childNode = childNodes.item(i);
                     // is it a parent?
                     if (maxIndex == null) {
-                        // TODO could just break outer here
                         for (var j in parents) {
                             var parent = parents[j];
                             if (parent._renderedNode == childNode) {
@@ -79,7 +78,7 @@
                         }
                     }
                 }
-                // insert just after the minimum index
+                // insert just before the maximum index
                 if (maxIndex != null) {
                     var minParentNode = childNodes.item(maxIndex);
                     this._root.insertBefore(treeNode._renderedNode, minParentNode);
@@ -115,6 +114,13 @@
             delete this._allNodes[treeNode._render.id];
             this.removeTreeNode(treeNode);
             //this.redraw();
+        }
+
+        addRootNode(treeNode: ViewSVGGroupGraphNodeSD3) {
+            var index = this._rootNodes.indexOf(treeNode);
+            if (index < 0) {
+                this._rootNodes.push(treeNode);
+            }
         }
 
         removeRootNode(treeNode: ViewSVGGroupGraphNodeSD3) {

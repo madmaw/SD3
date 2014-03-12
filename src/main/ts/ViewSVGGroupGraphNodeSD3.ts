@@ -84,12 +84,12 @@
 
         public adopt(child: ViewSVGGroupGraphNodeSD3) {
             if (this.isDescendant(child)) {
-                throw "I'm your child you sick fuck";
-            }
-            if (child.isAncestor(this)) {
-                throw "that's your father you sick fuck";
-            }
-            if (child._parents.indexOf(this) < 0) {
+                //throw "I'm your child you sick fuck";
+                console.log("attempted to add circular inheritance (via child)");
+            } else if (child.isAncestor(this)) {
+                //throw "that's your father you sick fuck";
+                console.log("attempted to add circular inheritance (via parent)");
+            } else if (child._parents.indexOf(this) < 0) {
                 child._parents.push(this);
                 this._children.push(child);
                 this.unionCombinedBounds(child._combinedBounds);
@@ -163,8 +163,10 @@
                                 if (newChild) {
                                     if (newChild.node == adding) {
                                         // TODO check if it was added or was separate (do not disown child if it was separate)
-                                        if (renderBoundsOverlaps && !newChild.separate) {
-                                            this.disown(child);
+                                        if (!newChild.separate) {
+                                            if (renderBoundsOverlaps) {
+                                                this.disown(child);
+                                            }
                                             adding.adopt(child);
                                         }
                                         //addingSeparate = newChild.separate || addingSeparate;
@@ -198,14 +200,59 @@
         }
 
         public removeSelf(graph: ViewSVGGroupGraphSD3) {
-            // TODO there's probably a more efficient way of doing this
             // remove self from parent node
+
+            // copy the parents, we'll need them in a minute (kind of cheat by reassigning to empty)
+            /*
+            var parents = this._parents;
+            this._parents = [];
+
+            // remove self from parents
+            for (var i = parents.length; i > 0;) {
+                i--;
+                var parent = parents[i];
+                parent.disown(this);
+            }
+            graph.removeRootNode(this);
+
+            // add the children to the parents
+            for (var i = this._children.length; i > 0;) {
+                i--;
+                var child = this._children[i];
+
+                child.inheritAncestors(parents, graph);
+            }
+            */
+            // TODO there's probably a more efficient way of doing this (above doesn't quite work)
             var all = [];
             this.disintegrate(all);
             for (var i in all) {
                 var node = all[i];
                 graph.removeRootNode(node);
-                graph.addTreeNode(node);
+                if (node != this) {
+                    // do not add self back in
+                    graph.addTreeNode(node);
+                }
+            }
+
+        }
+
+        public inheritAncestors(ancestors: ViewSVGGroupGraphNodeSD3[], graph: ViewSVGGroupGraphSD3) {
+            // I think we want the render bounds, not the combined bounds
+            var descendantBounds = this._render.getBounds();
+            for (var i in ancestors) {
+                var ancestor = ancestors[i];
+                if (ancestor._combinedBounds.overlapsByMargin(descendantBounds, ViewSVGGroupGraphNodeSD3.OVERLAP_MARGIN)) {
+                    ancestor.adopt(this);
+                } else {
+                    // well I guess it overlaps with their ancestor
+                    var previousAncestors = ancestor._parents;
+                    if (previousAncestors.length == 0) {
+                        graph.addRootNode(this);
+                    } else {
+                        this.inheritAncestors(previousAncestors, graph);
+                    }
+                }
             }
         }
 

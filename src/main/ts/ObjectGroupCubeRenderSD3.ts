@@ -34,46 +34,51 @@ module SD3 {
             var sdy = y - this._maxY;
             var dy = sdy / this._camera.getRotationXCos();
             var render: IObjectRenderSD3;
-            if (dx > 0) {
-                // check the right
-                var ty = this._rightTan * dx;
-                if (ty > dy) {
-                    // use top
-                    render = this._topRender;
-                    top = true;
-                } else {
-                    right = true;
-                    
-                    if (this._rightRender != null) {
-                        // use right face
-                        render = this._rightRender;
-                    } /* else if (this._leftRender != null) {
-                        render = this._leftRender;
-                    } else {
+            if (!isAlmostZero(this._camera.getRotationX())) {
+                if (dx > 0) {
+                    // check the right
+                    var ty = this._rightTan * dx;
+                    if (ty > dy) {
+                        // use top
                         render = this._topRender;
-                    } */
-                    
+                        top = true;
+                    } else {
+                        right = true;
+
+                        if (this._rightRender != null) {
+                            // use right face
+                            render = this._rightRender;
+                        } /* else if (this._leftRender != null) {
+                            render = this._leftRender;
+                        } else {
+                            render = this._topRender;
+                        } */
+
+                    }
+                } else {
+                    // check the left
+                    var ty = this._leftTan * dx;
+                    if (ty > dy) {
+                        // use top
+                        top = true;
+                        render = this._topRender;
+                    } else {
+                        left = true;
+
+                        if (this._leftRender != null) {
+                            // use left face
+                            render = this._leftRender;
+                        } /* else if (this._rightRender != null) {
+                            render = this._rightRender;
+                        } else {
+                            render = this._topRender;
+                        }*/
+
+                    }
                 }
             } else {
-                // check the left
-                var ty = this._leftTan * dx;
-                if (ty > dy) {
-                    // use top
-                    top = true;
-                    render = this._topRender;
-                } else {
-                    left = true;
-                    
-                    if (this._leftRender != null) {
-                        // use left face
-                        render = this._leftRender;
-                    } /* else if (this._rightRender != null) {
-                        render = this._rightRender;
-                    } else {
-                        render = this._topRender;
-                    }*/
-                    
-                }
+                top = true;
+                render = this._topRender;
             }
             var result: number;
             if (top) {
